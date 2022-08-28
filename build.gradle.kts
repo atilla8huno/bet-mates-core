@@ -6,6 +6,7 @@ val prometeus_version : String by project
 plugins {
     application
     kotlin("jvm") version "1.7.10"
+    id("org.jmailen.kotlinter") version "3.11.1"
 }
 
 group = "com.example"

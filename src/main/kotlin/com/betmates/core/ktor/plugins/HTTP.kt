@@ -1,11 +1,9 @@
 package com.betmates.core.ktor.plugins
 
-import io.ktor.server.plugins.defaultheaders.*
 import io.ktor.http.*
-import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.application.*
-import io.ktor.server.response.*
-import io.ktor.server.request.*
+import io.ktor.server.plugins.cors.routing.*
+import io.ktor.server.plugins.defaultheaders.*
 
 fun Application.configureHTTP() {
     install(DefaultHeaders) {
@@ -19,5 +17,4 @@ fun Application.configureHTTP() {
         allowHeader(HttpHeaders.Authorization)
         anyHost() // @TODO: Don't do this in production if possible. Try to limit it.
     }
-
 }
