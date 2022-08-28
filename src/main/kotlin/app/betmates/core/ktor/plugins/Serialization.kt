@@ -1,4 +1,4 @@
-package com.betmates.core.ktor.plugins
+package app.betmates.core.ktor.plugins
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import io.ktor.serialization.jackson.jackson

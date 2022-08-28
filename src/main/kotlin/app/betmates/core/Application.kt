@@ -1,9 +1,9 @@
-package com.betmates.core
+package app.betmates.core
 
-import com.betmates.core.ktor.plugins.configureHTTP
-import com.betmates.core.ktor.plugins.configureMonitoring
-import com.betmates.core.ktor.plugins.configureRouting
-import com.betmates.core.ktor.plugins.configureSerialization
+import app.betmates.core.ktor.plugins.configureHTTP
+import app.betmates.core.ktor.plugins.configureMonitoring
+import app.betmates.core.ktor.plugins.configureRouting
+import app.betmates.core.ktor.plugins.configureSerialization
 import io.ktor.server.application.Application
 
 fun main(args: Array<String>): Unit =
