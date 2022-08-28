@@ -1,4 +1,4 @@
-package com.example.plugins
+package app.betmates.plugins
 
 import io.ktor.server.plugins.*
 import io.micrometer.prometheus.*

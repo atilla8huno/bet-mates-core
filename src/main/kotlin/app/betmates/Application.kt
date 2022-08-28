@@ -1,7 +1,10 @@
-package com.example
+package app.betmates
 
+import app.betmates.plugins.configureHTTP
+import app.betmates.plugins.configureMonitoring
+import app.betmates.plugins.configureRouting
+import app.betmates.plugins.configureSerialization
 import io.ktor.server.application.*
-import com.example.plugins.*
 
 fun main(args: Array<String>): Unit =
     io.ktor.server.cio.EngineMain.main(args)
