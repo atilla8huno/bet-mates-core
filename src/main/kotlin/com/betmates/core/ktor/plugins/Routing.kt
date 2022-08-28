@@ -1,4 +1,4 @@
-package com.example.plugins
+package com.betmates.core.ktor.plugins
 
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
