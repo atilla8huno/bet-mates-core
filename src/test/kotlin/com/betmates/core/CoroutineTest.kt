@@ -1,4 +1,4 @@
-package app.betmates
+package com.betmates.core
 
 import io.mockk.coEvery
 import io.mockk.coVerify

@@ -1,4 +1,4 @@
-package app.betmates.plugins
+package com.betmates.core.ktor.plugins
 
 import io.ktor.server.plugins.defaultheaders.*
 import io.ktor.http.*
@@ -17,7 +17,6 @@ fun Application.configureHTTP() {
         allowMethod(HttpMethod.Delete)
         allowMethod(HttpMethod.Patch)
         allowHeader(HttpHeaders.Authorization)
-        allowHeader("MyCustomHeader")
         anyHost() // @TODO: Don't do this in production if possible. Try to limit it.
     }
 

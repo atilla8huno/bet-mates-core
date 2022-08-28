@@ -1,6 +1,6 @@
-package app.betmates
+package com.betmates.core
 
-import app.betmates.plugins.configureRouting
+import com.betmates.core.ktor.plugins.configureRouting
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
