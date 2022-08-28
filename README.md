@@ -13,5 +13,9 @@ This project contains the core features of the *Bet Mates*. The core features at
 To build the project locally, just run:
 
 ```
-./gradlew clean build
+./gradlew formatKotlin clean build
 ```
+
+## Linter
+
+The project is using the [Kotlinter](https://github.com/jeremymailen/kotlinter-gradle) as a linter tool.

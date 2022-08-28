@@ -19,5 +19,4 @@ fun Application.configureHTTP() {
         allowHeader(HttpHeaders.Authorization)
         anyHost() // @TODO: Don't do this in production if possible. Try to limit it.
     }
-
 }

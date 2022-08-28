@@ -1,6 +1,5 @@
 package app.betmates.core.ktor.plugins
 
-
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
@@ -13,10 +12,10 @@ import io.micrometer.prometheus.PrometheusMeterRegistry
 
 fun Application.configureMonitoring() {
     val appMicrometerRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
-    
-        install(MicrometerMetrics) {
-            registry = appMicrometerRegistry
-        }
+
+    install(MicrometerMetrics) {
+        registry = appMicrometerRegistry
+    }
 
     routing {
         get("/prometheus") {

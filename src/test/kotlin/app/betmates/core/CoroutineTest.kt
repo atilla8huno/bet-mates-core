@@ -26,8 +26,8 @@ class CoroutineTest {
 
     @Test
     fun `GIVEN userId WHEN getAsync THEN should call API to get user asynchronously`() = runTest {
-        //given
-        val userId = "123";
+        // given
+        val userId = "123"
 
         coEvery {
             apiService.getUser(userId)
@@ -35,12 +35,12 @@ class CoroutineTest {
 
         val presenter = UserPresenter(apiService)
 
-        //when
+        // when
         presenter.getAsync(userId)
 
-        //then
+        // then
         coVerify {
-            //when
+            // when
             apiService.getUser(userId)
         }
     }
