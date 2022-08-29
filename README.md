@@ -1,4 +1,4 @@
-# Bet Mates Core
+# Bet Mates Core [![build](https://github.com/bet-mates/bet-mates-core/actions/workflows/gradle.yml/badge.svg?branch=main)](https://github.com/bet-mates/bet-mates-core/actions/workflows/gradle.yml)
 
 This project contains the core features of the *Bet Mates*. The core features at the moment are competitions and bets.
 

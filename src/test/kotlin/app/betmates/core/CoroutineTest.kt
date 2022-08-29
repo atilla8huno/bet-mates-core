@@ -40,7 +40,6 @@ class CoroutineTest {
 
         // then
         coVerify {
-            // when
             apiService.getUser(userId)
         }
     }
