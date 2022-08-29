@@ -8,11 +8,14 @@ val mockk_version: String by project
 plugins {
     application
     kotlin("jvm") version "1.7.10"
+    `maven-publish`
     id("org.jmailen.kotlinter") version "3.11.1"
+    id("com.github.jmongard.git-semver-plugin") version "0.4.3"
+    id("io.ktor.plugin") version "2.1.0"
 }
 
 group = "app.betmates"
-version = "0.0.1"
+version = semver.version
 application {
     mainClass.set("io.ktor.server.cio.EngineMain")
 
@@ -41,24 +44,9 @@ dependencies {
     testImplementation("io.mockk:mockk:$mockk_version")
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
 tasks {
-    val buildFatJar = register<Jar>("buildFatJar") {
-        dependsOn.addAll(listOf("compileJava", "compileKotlin", "processResources"))
-        archiveClassifier.set("standalone")
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        manifest { attributes(mapOf("Main-Class" to application.mainClass)) }
-        val sourcesMain = sourceSets.main.get()
-        val contents = configurations.runtimeClasspath.get()
-            .map { if (it.isDirectory) it else zipTree(it) } +
-                sourcesMain.output
-        from(contents)
-    }
-    build {
-        dependsOn(buildFatJar)
+    test {
+        useJUnitPlatform()
     }
 }
 
@@ -66,5 +54,29 @@ tasks {
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/bet-mates/bet-mates-core")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+    publications {
+        register<MavenPublication>("gpr") {
+            from(components["java"])
+        }
+    }
+}
+
+ktor {
+    fatJar {
+        archiveFileName.set("bet-mates-core-${project.version}-standalone.jar")
     }
 }
