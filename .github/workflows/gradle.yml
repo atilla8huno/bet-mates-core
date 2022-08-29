@@ -13,6 +13,7 @@ permissions:
 
 env:
   IMAGE_NAME: bet-mates-core
+  GITHUB_TOKEN: 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
 
 jobs:
   build:
@@ -36,8 +37,6 @@ jobs:
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         arguments: publish
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   docker:
     runs-on: ubuntu-latest
