@@ -1,4 +1,4 @@
-name: build
+name: Gradle Build
 
 on:
   push:
@@ -9,11 +9,22 @@ on:
     branches: [ "main" ]
 
 permissions:
+  actions: write
+  checks: read
   contents: read
+  deployments: write
+  id-token: write
+  issues: read
+  discussions: read
+  packages: write
+  pages: read
+  pull-requests: read
+  repository-projects: read
+  security-events: write
+  statuses: write
 
 env:
   IMAGE_NAME: bet-mates-core
-  GITHUB_TOKEN: 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
 
 jobs:
   build:
