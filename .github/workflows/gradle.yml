@@ -42,17 +42,16 @@ jobs:
     - name: Build with Gradle
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
-        arguments: build
+        arguments: clean buildFatJar
 
-    - name: Release version
-      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+    - uses: actions/upload-artifact@v3
       with:
-        arguments: publish
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        name: bet-mates-core.jar
+        path: ./build/libs/bet-mates-core-0.0.1-SNAPSHOT-standalone.jar
 
   docker:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
 
     permissions:
       packages: write
