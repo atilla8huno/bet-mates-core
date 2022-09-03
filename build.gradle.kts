@@ -5,6 +5,7 @@ val prometeus_version: String by project
 val coroutines_version: String by project
 val mockk_version: String by project
 val exposedVersion: String by project
+val junit_version: String by project
 
 plugins {
     application
@@ -53,9 +54,13 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
 
     testImplementation(kotlin("test"))
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junit_version")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:$junit_version")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("io.mockk:mockk:$mockk_version")
+
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit_version")
 }
 
 tasks {
