@@ -70,7 +70,7 @@ jobs:
       - name: Build image
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        run: DOCKER_BUILDKIT=1 docker build --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" --secret id=DB_PASSWORD .
+        run: docker build --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" --build-arg DB_PASSWORD=$DB_PASSWORD .
 
       - name: Login to GitHub Container Registry (2)
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin

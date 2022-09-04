@@ -17,4 +17,11 @@ sealed class PropertyUtil(
 
 class ConfigProperties : PropertyUtil("config.properties")
 
-class DatabaseProperties : PropertyUtil("database.properties")
+class DatabaseProperties : PropertyUtil("database.properties") {
+    val username = getProperty("db.username")
+    val password: String? = System.getenv("DB_PASSWORD")
+    val host = getProperty("db.host")
+    val database = getProperty("db.database")
+    val port = getProperty("db.port")
+    val options = getProperty("db.options")
+}

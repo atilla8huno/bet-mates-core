@@ -5,8 +5,9 @@ RUN gradle build --no-daemon
 
 FROM openjdk:17
 EXPOSE 8080:8080
+ARG DB_PASSWORD
+ENV DB_PASSWORD $DB_PASSWORD
 RUN mkdir /app
-RUN --mount=type=secret,id=DB_PASSWORD
 COPY --from=build /home/gradle/src/build/libs/*standalone.jar /app/bet-mates-core.jar
 WORKDIR /app
-ENTRYPOINT ["java", "-jar", "/app/bet-mates-core.jar", "-Ddb.password=$(cat /run/secrets/DB_PASSWORD)"]
+ENTRYPOINT ["java", "-jar", "/app/bet-mates-core.jar"]
