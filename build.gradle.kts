@@ -4,8 +4,9 @@ val logback_version: String by project
 val prometeus_version: String by project
 val coroutines_version: String by project
 val mockk_version: String by project
-val exposedVersion: String by project
+val exposed_version: String by project
 val junit_version: String by project
+val h2_version: String by project
 
 plugins {
     application
@@ -49,9 +50,9 @@ dependencies {
     implementation("io.ktor:ktor-server-cio-jvm:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
-    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
 
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junit_version")
@@ -59,6 +60,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("io.mockk:mockk:$mockk_version")
+    testImplementation("com.h2database:h2:$h2_version")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit_version")
 }

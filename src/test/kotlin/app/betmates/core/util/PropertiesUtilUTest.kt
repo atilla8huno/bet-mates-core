@@ -31,5 +31,6 @@ internal class PropertiesUtilUTest {
         assertFalse { DatabaseProperties.port.isNullOrBlank() }
         assertFalse { DatabaseProperties.database.isNullOrBlank() }
         assertFalse { DatabaseProperties.options.isNullOrBlank() }
+        assertFalse { DatabaseProperties.driver.isNullOrBlank() }
     }
 }

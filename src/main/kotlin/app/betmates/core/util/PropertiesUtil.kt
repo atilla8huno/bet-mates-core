@@ -17,6 +17,7 @@ object DatabaseProperties : PropertiesUtil() {
     val port = getProperty("ktor.db.port")
     val database = getProperty("ktor.db.database")
     val options = getProperty("ktor.db.options")
+    val driver = getProperty("ktor.db.driver")
 
     val jdbcUrl = "jdbc:postgresql://$host:$port/$database?options=$options"
 }
