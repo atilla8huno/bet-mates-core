@@ -1,31 +1,38 @@
 package app.betmates.core.db
 
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.transactions.transaction
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-internal class UserDAOITest : DbTestUtil() {
+@OptIn(ExperimentalCoroutinesApi::class)
+internal class UserDAOITest : DAOTest() {
 
     @Test
-    fun `should save and find a user in the database`() {
-        Database.connect(url = "jdbc:h2:mem:test", driver = "org.h2.Driver", user = "root")
-        transaction {
-            // given
+    fun `should save and find a user in the database`() = runTest {
+        newSuspendedTransaction(Dispatchers.Default, db = db) {
             setUp()
 
-            val userId = UserDAO.new {
-                name = "Johnny Doe"
-                email = "Johnny.doe@google.com"
-            }.id
+            val userById = suspendedTransactionAsync {
+                // given
+                val userId = UserDAO.new {
+                    name = "Johnny Doe"
+                    email = "Johnny.doe@google.com"
+                }.id
 
-            // when
-            val theUser = UserDAO.findById(userId)
+                // when
+                UserDAO.findById(userId)
+            }
 
             // then
-            assertNotNull(theUser)
-            assertEquals(userId.value, theUser.id.value)
+            val actual = userById.await()
+            assertNotNull(actual)
+            assertEquals("Johnny Doe", actual.name)
+            assertEquals("Johnny.doe@google.com", actual.email)
 
             cleanUp()
         }

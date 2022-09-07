@@ -25,7 +25,7 @@ class CoroutineTest {
     }
 
     @Test
-    fun `GIVEN userId WHEN getAsync THEN should call API to get user asynchronously`() = runTest {
+    fun `should call API to get user asynchronously`() = runTest {
         // given
         val userId = "123"
 

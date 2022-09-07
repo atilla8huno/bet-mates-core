@@ -1,6 +1,5 @@
 package app.betmates.core.db
 
-import app.betmates.core.db.UserEntity.nullable
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

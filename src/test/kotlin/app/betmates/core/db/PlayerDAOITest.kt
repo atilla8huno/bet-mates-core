@@ -1,35 +1,43 @@
 package app.betmates.core.db
 
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.transactions.transaction
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransaction
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-internal class PlayerDAOITest : DbTestUtil() {
+@OptIn(ExperimentalCoroutinesApi::class)
+internal class PlayerDAOITest : DAOTest() {
 
     @Test
-    fun `should save and find a player in the database`() {
-        Database.connect(url = "jdbc:h2:mem:test", driver = "org.h2.Driver", user = "root")
-        transaction {
-            // given
+    fun `should save and find a player in the database`() = runTest {
+        // given
+        newSuspendedTransaction(Dispatchers.Default, db = db) {
             setUp()
 
-            val theUser = UserDAO.new {
-                name = "Johnny Doe"
-                email = "Johnny.doe@google.com"
+            val newUser = suspendedTransaction {
+                UserDAO.new {
+                    name = "Johnny Doe"
+                    email = "Johnny.doe@google.com"
+                }
             }
-            val playerId = PlayerDAO.new {
-                nickName = "John da Massa"
-                user = theUser
-            }.id.value
 
-            // when
-            val thePlayer = PlayerDAO.findById(playerId)
+            suspendedTransaction {
+                PlayerDAO.new {
+                    nickName = "John da Massa"
+                    user = newUser
+                }
+            }
 
-            // then
-            assertNotNull(thePlayer)
-            assertEquals(playerId, thePlayer.id.value)
+            suspendedTransaction {
+                // when
+                val foundPlayer = PlayerDAO.find { PlayerEntity.nickName eq "John da Massa" }.singleOrNull()
+
+                // then
+                assertNotNull(foundPlayer)
+            }
 
             cleanUp()
         }
