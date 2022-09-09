@@ -1,5 +1,6 @@
-package app.betmates.core.db
+package app.betmates.core.db.entity
 
+import app.betmates.core.db.RepositoryTest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -9,7 +10,7 @@ import kotlin.test.Test
 import kotlin.test.assertNotNull
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class PlayerDAOITest : DAOTest() {
+internal class PlayerRepositoryITest : RepositoryTest() {
 
     @Test
     fun `should save and find a player in the database`() = runTest {
@@ -18,14 +19,14 @@ internal class PlayerDAOITest : DAOTest() {
             setUp()
 
             val newUser = suspendedTransaction {
-                UserDAO.new {
+                UserRepository.new {
                     name = "Johnny Doe"
                     email = "Johnny.doe@google.com"
                 }
             }
 
             suspendedTransaction {
-                PlayerDAO.new {
+                PlayerRepository.new {
                     nickName = "John da Massa"
                     user = newUser
                 }
@@ -33,7 +34,7 @@ internal class PlayerDAOITest : DAOTest() {
 
             suspendedTransaction {
                 // when
-                val foundPlayer = PlayerDAO.find { PlayerEntity.nickName eq "John da Massa" }.singleOrNull()
+                val foundPlayer = PlayerRepository.find { PlayerEntity.nickName eq "John da Massa" }.singleOrNull()
 
                 // then
                 assertNotNull(foundPlayer)

@@ -1,5 +1,6 @@
-package app.betmates.core.db
+package app.betmates.core.db.entity
 
+import app.betmates.core.db.RepositoryTest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -10,7 +11,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class UserDAOITest : DAOTest() {
+internal class UserRepositoryITest : RepositoryTest() {
 
     @Test
     fun `should save and find a user in the database`() = runTest {
@@ -19,13 +20,13 @@ internal class UserDAOITest : DAOTest() {
 
             val userById = suspendedTransactionAsync {
                 // given
-                val userId = UserDAO.new {
+                val userId = UserRepository.new {
                     name = "Johnny Doe"
                     email = "Johnny.doe@google.com"
                 }.id
 
                 // when
-                UserDAO.findById(userId)
+                UserRepository.findById(userId)
             }
 
             // then
