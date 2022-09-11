@@ -55,4 +55,21 @@ internal class PlayerUTest {
         assertFalse { player.memberOf().contains(team) }
         assertFalse { team.players().contains(player) }
     }
+
+    @Test
+    fun `should associate Player to an User`() {
+        // given
+        val player = Player("CR7")
+        val user = User(
+            name = "Cristiano Ronaldo",
+            email = "pai@cr7.com"
+        )
+
+        // when
+        player.associateTo(user)
+
+        // then
+        assertNotNull(player.user)
+        assertEquals(user, player.user)
+    }
 }
