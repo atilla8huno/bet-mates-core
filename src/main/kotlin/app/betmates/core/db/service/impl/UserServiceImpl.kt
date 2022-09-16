@@ -1,7 +1,8 @@
-package app.betmates.core.db.service
+package app.betmates.core.db.service.impl
 
 import app.betmates.core.db.DatabaseConnection
 import app.betmates.core.db.entity.UserRepository
+import app.betmates.core.db.service.UserService
 import app.betmates.core.domain.Status
 import app.betmates.core.domain.User
 import kotlinx.coroutines.coroutineScope

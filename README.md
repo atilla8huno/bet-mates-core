@@ -41,10 +41,9 @@ java -jar ./build/libs/bet-mates-core-0.0.1-SNAPSHOT-standalone.jar
 
 ### Docker
 
-Note: you must log in the registry GitHub Packages (ghcr.io) with `docker login`
+Note: you must log in the registry [GitHub Packages (ghcr.io)](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) with `docker login`
 
-To build the image, refer to the code in Git Workflow of the project
-https://github.com/bet-mates/bet-mates-core/blob/main/.github/workflows/gradle.yml#L70-L73
+To build the image, refer to the [Git Workflow code](https://github.com/bet-mates/bet-mates-core/blob/main/.github/workflows/gradle.yml#L70-L73) of the project
 
 Otherwise, pull the image from the registry built from master:
 ```
@@ -58,6 +57,4 @@ Now it should be available at http://localhost:8080/
 
 ### Directly from Intellij IDEA
 
-Run the method `main` from the class app.betmates.core.Application.kt
-
-Find it here: https://github.com/bet-mates/bet-mates-core/blob/main/src/main/kotlin/app/betmates/core/Application.kt#L9-L10
+Run the method `main` from the class [app.betmates.core.Application.kt](https://github.com/bet-mates/bet-mates-core/blob/main/src/main/kotlin/app/betmates/core/Application.kt#L9-L10)

@@ -1,6 +1,7 @@
 package app.betmates.core.db.service
 
 import app.betmates.core.db.RepositoryTest
+import app.betmates.core.db.service.impl.UserServiceImpl
 import app.betmates.core.domain.User
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -18,15 +19,15 @@ class UserServiceITest : RepositoryTest() {
 
     @BeforeTest
     fun init() {
-        userService = UserServiceImpl(db)
+        userService = UserServiceImpl(database = db)
     }
 
     @Test
     fun `should save a user in the database and find it by its ID`() {
         transaction {
-            runTest {
-                setUp()
+            setUp()
 
+            runTest {
                 // given
                 val user = User(
                     name = "Alfa Romeo",
@@ -47,9 +48,9 @@ class UserServiceITest : RepositoryTest() {
                 assertEquals(userSaved.email, userFound.email)
                 assertEquals(userSaved.username, userFound.username)
                 assertEquals(userSaved.isActive(), userFound.isActive())
-
-                cleanUp()
             }
+
+            cleanUp()
         }
     }
 }
