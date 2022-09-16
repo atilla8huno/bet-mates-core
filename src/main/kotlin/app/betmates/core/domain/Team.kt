@@ -4,7 +4,7 @@ sealed class Team(
     val type: TeamType,
     open var name: String,
     private val players: MutableSet<Player> = mutableSetOf()
-) {
+) : Base() {
     var status: Status = Status.ACTIVE
         private set
 

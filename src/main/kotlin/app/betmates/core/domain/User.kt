@@ -2,13 +2,15 @@ package app.betmates.core.domain
 
 import java.security.MessageDigest
 
-private val sha3: MessageDigest = MessageDigest.getInstance("SHA3-256")
-
 class User(
     val name: String,
     val email: String,
     val username: String = email.split("@")[0]
-) {
+) : Base() {
+    companion object {
+        private val SHA3: MessageDigest = MessageDigest.getInstance("SHA3-256")
+    }
+
     private var status: Status = Status.ACTIVE
     var encryptedPassword: String? = null
         private set
@@ -20,7 +22,7 @@ class User(
     }
 
     fun acceptPassword(password: String) {
-        val hashBytes: ByteArray = sha3.digest(
+        val hashBytes: ByteArray = SHA3.digest(
             password.toByteArray(Charsets.UTF_8)
         )
         encryptedPassword = hashBytes.toHex()

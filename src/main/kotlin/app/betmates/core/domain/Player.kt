@@ -3,7 +3,7 @@ package app.betmates.core.domain
 class Player(
     val nickName: String,
     private val memberOf: MutableSet<Team> = mutableSetOf()
-) {
+) : Base() {
     var user: User? = null
         private set
 
