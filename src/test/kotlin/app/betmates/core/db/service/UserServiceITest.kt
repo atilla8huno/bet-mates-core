@@ -1,6 +1,7 @@
 package app.betmates.core.db.service
 
 import app.betmates.core.db.RepositoryTest
+import app.betmates.core.db.entity.UserRepository
 import app.betmates.core.db.service.impl.UserServiceImpl
 import app.betmates.core.domain.User
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,7 +24,7 @@ class UserServiceITest : RepositoryTest() {
     }
 
     @Test
-    fun `should save a user in the database and find it by its ID`() {
+    override fun `should save the domain in the database and find it by its ID`() {
         transaction {
             setUp()
 
@@ -48,6 +49,32 @@ class UserServiceITest : RepositoryTest() {
                 assertEquals(userSaved.email, userFound.email)
                 assertEquals(userSaved.username, userFound.username)
                 assertEquals(userSaved.isActive(), userFound.isActive())
+            }
+
+            cleanUp()
+        }
+    }
+
+    @Test
+    override fun `should map entity to domain`() {
+        transaction {
+            setUp()
+
+            runTest {
+                // given
+                val user = userService.save(User("Zinedine Zidane", "zizou@rm.es"))
+
+                val entity = UserRepository.findById(user.id!!)
+
+                // when
+                val domain = userService.mapToDomain(entity!!)
+
+                // then
+                assertNotNull(domain)
+                assertEquals(user.name, domain.name)
+                assertEquals(user.email, domain.email)
+                assertEquals(user.username, domain.username)
+                assertEquals(user.isActive(), domain.isActive())
             }
 
             cleanUp()

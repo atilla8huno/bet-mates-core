@@ -19,7 +19,7 @@ class PlayerServiceImpl(
         newSuspendedTransaction(db = database) {
             val playerId = PlayerRepository.new {
                 nickName = domain.nickName
-                user = UserRepository.findById(domain.user?.id!!)!!
+                user = UserRepository.findById(domain.user.id!!)!!
             }.id.value
 
             domain.apply { id = playerId }
@@ -29,15 +29,17 @@ class PlayerServiceImpl(
     override suspend fun findById(id: Long): Player? = coroutineScope {
         newSuspendedTransaction(db = database) {
             PlayerRepository.findById(id)?.let {
-                Player(
-                    nickName = it.nickName
-                ).also { player ->
-                    player.id = id
-                    userService.findById(it.user.id.value)?.let { user ->
-                        player.associateTo(user)
-                    }
-                }
+                mapToDomain(it)
             }
+        }
+    }
+
+    override fun mapToDomain(entity: PlayerRepository): Player {
+        return Player(
+            nickName = entity.nickName,
+            user = userService.mapToDomain(entity.user)
+        ).also { player ->
+            player.id = entity.id.value
         }
     }
 }

@@ -11,21 +11,24 @@ internal class PlayerUTest {
     @Test
     fun `should create Player instance`() {
         // given
+        val user = User("User", "user@gmail.com").apply { id = 1L }
         val nickName = "London FC"
 
         // when
-        val player = Player(nickName)
+        val player = Player(nickName, user = user)
 
         // then
         assertNotNull(player)
         assertEquals(nickName, player.nickName)
+        assertEquals(user, player.user)
         assertTrue { player.memberOf().isEmpty() }
     }
 
     @Test
     fun `should make player member of a team`() {
         // given
-        val player = Player("Ronnie O'Sullivan")
+        val user = User("User", "user@gmail.com").apply { id = 1L }
+        val player = Player("Ronnie O'Sullivan", user = user)
         val team = SnookerTeam("The Rocket")
 
         assertTrue {
@@ -41,7 +44,8 @@ internal class PlayerUTest {
     @Test
     fun `should remove player from team`() {
         // given
-        val player = Player("C. Ronaldo")
+        val user = User("User", "user@gmail.com").apply { id = 1L }
+        val player = Player("C. Ronaldo", user = user)
         val team = FootballTeam("Real Madrid FC")
         player.addToTeam(team)
         assertTrue { player.memberOf().contains(team) }
@@ -54,22 +58,5 @@ internal class PlayerUTest {
         // then
         assertFalse { player.memberOf().contains(team) }
         assertFalse { team.players().contains(player) }
-    }
-
-    @Test
-    fun `should associate Player to an User`() {
-        // given
-        val player = Player("CR7")
-        val user = User(
-            name = "Cristiano Ronaldo",
-            email = "pai@cr7.com"
-        )
-
-        // when
-        player.associateTo(user)
-
-        // then
-        assertNotNull(player.user)
-        assertEquals(user, player.user)
     }
 }

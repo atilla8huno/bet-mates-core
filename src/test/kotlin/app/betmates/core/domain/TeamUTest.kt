@@ -39,7 +39,8 @@ internal class TeamUTest {
     @Test
     fun `should make player member of the team`() {
         // given
-        val player = Player("C. Ronaldo")
+        val user = User("User", "user@gmail.com").apply { id = 1L }
+        val player = Player("C. Ronaldo", user = user)
         val team = FootballTeam("Real Madrid FC")
 
         assertTrue {
@@ -55,7 +56,8 @@ internal class TeamUTest {
     @Test
     fun `should remove player from the team`() {
         // given
-        val player = Player("C. Ronaldo")
+        val user = User("User", "user@gmail.com").apply { id = 1L }
+        val player = Player("C. Ronaldo", user = user)
         val team = FootballTeam("Real Madrid FC")
         team.addPlayer(player)
         assertTrue { team.players().contains(player) }

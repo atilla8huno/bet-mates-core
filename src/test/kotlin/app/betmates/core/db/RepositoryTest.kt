@@ -15,9 +15,12 @@ import org.jetbrains.exposed.sql.addLogger
 import kotlin.test.BeforeTest
 
 @OptIn(ExperimentalCoroutinesApi::class)
-open class RepositoryTest {
+abstract class RepositoryTest {
 
     lateinit var db: Database
+
+    abstract fun `should save the domain in the database and find it by its ID`()
+    abstract fun `should map entity to domain`()
 
     @BeforeTest
     fun connect() {

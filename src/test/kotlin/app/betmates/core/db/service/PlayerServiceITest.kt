@@ -1,6 +1,7 @@
 package app.betmates.core.db.service
 
 import app.betmates.core.db.RepositoryTest
+import app.betmates.core.db.entity.PlayerRepository
 import app.betmates.core.db.service.impl.PlayerServiceImpl
 import app.betmates.core.db.service.impl.UserServiceImpl
 import app.betmates.core.domain.Player
@@ -26,17 +27,16 @@ class PlayerServiceITest : RepositoryTest() {
     }
 
     @Test
-    fun `should save a player, associate it to an user and find it by its ID`() {
+    override fun `should save the domain in the database and find it by its ID`() {
         transaction {
             setUp()
 
             runTest {
                 // given
                 val user = userService.save(User("Cristiano Ronaldo", "cris@cr7.com"))
-                val player = Player("CR7")
 
                 // when
-                player.associateTo(user)
+                val player = Player(nickName = "CR7", user = user)
                 val savedPlayer = playerService.save(player)
 
                 // then
@@ -46,6 +46,33 @@ class PlayerServiceITest : RepositoryTest() {
 
                 assertEquals(player.nickName, savedPlayer.nickName)
                 assertEquals(player.memberOf(), savedPlayer.memberOf())
+            }
+
+            cleanUp()
+        }
+    }
+
+    @Test
+    override fun `should map entity to domain`() {
+        transaction {
+            setUp()
+
+            runTest {
+                // given
+                val user = userService.save(User("Zinedine Zidane", "zizou@rm.es"))
+                val player = playerService.save(Player(nickName = "Zizou", user = user))
+
+                val entity = PlayerRepository.findById(player.id!!)
+
+                // when
+                val domain = playerService.mapToDomain(entity!!)
+
+                // then
+                assertNotNull(domain)
+                assertEquals(player, domain)
+                assertEquals(player.nickName, domain.nickName)
+                assertEquals(player.memberOf(), domain.memberOf())
+                assertEquals(player.user, domain.user)
             }
 
             cleanUp()

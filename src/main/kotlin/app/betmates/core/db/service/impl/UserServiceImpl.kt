@@ -30,15 +30,19 @@ class UserServiceImpl(
     override suspend fun findById(id: Long): User? = coroutineScope {
         newSuspendedTransaction(db = database) {
             UserRepository.findById(id)?.let {
-                User(
-                    name = it.name,
-                    email = it.email,
-                    username = it.username!!
-                ).also { user ->
-                    user.id = id
-                    if (it.status == Status.INACTIVE.name) user.deactivate()
-                }
+                mapToDomain(it)
             }
+        }
+    }
+
+    override fun mapToDomain(entity: UserRepository): User {
+        return User(
+            name = entity.name,
+            email = entity.email,
+            username = entity.username!!
+        ).also { user ->
+            user.id = entity.id.value
+            if (entity.status == Status.INACTIVE.name) user.deactivate()
         }
     }
 }
