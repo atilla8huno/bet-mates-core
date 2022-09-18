@@ -19,7 +19,11 @@ abstract class RepositoryTest {
 
     lateinit var db: Database
 
-    abstract fun `should save the domain in the database and find it by its ID`()
+    abstract fun `should save the domain in the database`()
+    abstract fun `should update the domain in the database`()
+    abstract fun `should delete the domain in the database`()
+    abstract fun `should find a record in the database by id`()
+    abstract fun `should find all records in the database`()
     abstract fun `should map entity to domain`()
 
     @BeforeTest

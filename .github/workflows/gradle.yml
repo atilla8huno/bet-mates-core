@@ -44,10 +44,10 @@ jobs:
       with:
         arguments: clean build --no-daemon
 
-    - uses: actions/upload-artifact@v3
-      with:
-        name: bet-mates-core.jar
-        path: ./build/libs/bet-mates-core-0.0.1-SNAPSHOT-standalone.jar
+#    - uses: actions/upload-artifact@v3
+#      with:
+#        name: bet-mates-core.jar
+#        path: ./build/libs/bet-mates-core-0.0.1-SNAPSHOT-standalone.jar
 
   docker:
     runs-on: ubuntu-latest

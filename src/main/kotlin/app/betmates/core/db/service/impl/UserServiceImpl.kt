@@ -6,6 +6,9 @@ import app.betmates.core.db.service.UserService
 import app.betmates.core.domain.Status
 import app.betmates.core.domain.User
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
@@ -27,11 +30,37 @@ class UserServiceImpl(
         }
     }
 
+    override suspend fun update(domain: User): User = coroutineScope {
+        newSuspendedTransaction(db = database) {
+            UserRepository.findById(domain.id!!)!!
+                .apply {
+                    name = domain.name
+                    email = domain.email
+                    username = domain.username
+                    status = if (domain.isActive()) Status.ACTIVE.name else Status.INACTIVE.name
+                }.let {
+                    mapToDomain(it)
+                }
+        }
+    }
+
+    override suspend fun delete(domain: User): Unit = coroutineScope {
+        newSuspendedTransaction(db = database) {
+            UserRepository.findById(domain.id!!)?.delete()
+        }
+    }
+
     override suspend fun findById(id: Long): User? = coroutineScope {
         newSuspendedTransaction(db = database) {
             UserRepository.findById(id)?.let {
                 mapToDomain(it)
             }
+        }
+    }
+
+    override suspend fun findAll(): Flow<User> = coroutineScope {
+        newSuspendedTransaction(db = database) {
+            UserRepository.all().asFlow().map { mapToDomain(it) }
         }
     }
 
