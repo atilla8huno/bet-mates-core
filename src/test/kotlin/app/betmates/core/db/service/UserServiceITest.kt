@@ -4,9 +4,11 @@ import app.betmates.core.db.RepositoryTest
 import app.betmates.core.db.entity.UserRepository
 import app.betmates.core.db.service.impl.UserServiceImpl
 import app.betmates.core.domain.User
+import app.betmates.core.domain.toHex
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.security.MessageDigest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -172,6 +174,7 @@ class UserServiceITest : RepositoryTest() {
         }
     }
 
+    @Test
     override fun `should find a record in the database by id`() {
         transaction {
             setUp()
@@ -190,5 +193,59 @@ class UserServiceITest : RepositoryTest() {
 
             cleanUp()
         }
+    }
+
+    @Test
+    fun `should find an user in the database by email`() {
+        transaction {
+            setUp()
+
+            runTest {
+                // given
+                val email = "user@1.com"
+                val user = userService.save(User("User 1", email))
+
+                // when
+                val foundUser = userService.findByEmail(email)
+
+                // then
+                assertNotNull(foundUser)
+                assertEquals(user, foundUser)
+            }
+
+            cleanUp()
+        }
+    }
+
+    @Test
+    fun `should update the password of an user in the database`() {
+        transaction {
+            setUp()
+
+            runTest {
+                // given
+                var user = User("User 1", "user@1.com")
+                val oldPassword = "123abc"
+                user.acceptPassword(oldPassword)
+
+                user = userService.save(user)
+
+                // when
+                val newPassword = "Th1sI5M0r3S4c4r3!!!"
+                user = userService.updatePassword(user, newPassword)!!
+
+                // then
+                assertEquals(encrypt(newPassword), user.encryptedPassword)
+            }
+
+            cleanUp()
+        }
+    }
+
+    private fun encrypt(password: String): String {
+        val hashBytes: ByteArray = MessageDigest.getInstance("SHA3-256").digest(
+            password.toByteArray(Charsets.UTF_8)
+        )
+        return hashBytes.toHex()
     }
 }

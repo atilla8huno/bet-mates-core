@@ -1,6 +1,7 @@
 package app.betmates.core.db.service.impl
 
 import app.betmates.core.db.DatabaseConnection
+import app.betmates.core.db.entity.UserEntity
 import app.betmates.core.db.entity.UserRepository
 import app.betmates.core.db.service.UserService
 import app.betmates.core.domain.Status
@@ -8,8 +9,10 @@ import app.betmates.core.domain.User
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class UserServiceImpl(
@@ -61,6 +64,30 @@ class UserServiceImpl(
     override suspend fun findAll(): Flow<User> = coroutineScope {
         newSuspendedTransaction(db = database) {
             UserRepository.all().asFlow().map { mapToDomain(it) }
+        }
+    }
+
+    override suspend fun findByEmail(email: String): User? = coroutineScope {
+        newSuspendedTransaction(db = database) {
+            UserRepository.find { UserEntity.email eq email }.firstOrNull()?.let {
+                mapToDomain(it)
+            }
+        }
+    }
+
+    override suspend fun updatePassword(
+        user: User,
+        newPassword: String
+    ): User? = coroutineScope {
+        newSuspendedTransaction(db = database) {
+            UserRepository.find {
+                (UserEntity.id eq user.id!!) and (UserEntity.password eq user.encryptedPassword!!)
+            }.firstOrNull()?.let {
+                user.acceptPassword(newPassword)
+                it.password = user.encryptedPassword
+
+                user
+            }
         }
     }
 
