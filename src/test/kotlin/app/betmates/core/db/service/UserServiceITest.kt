@@ -1,7 +1,7 @@
 package app.betmates.core.db.service
 
 import app.betmates.core.db.RepositoryTest
-import app.betmates.core.db.entity.UserRepository
+import app.betmates.core.db.entity.UserEntity
 import app.betmates.core.db.service.impl.UserServiceImpl
 import app.betmates.core.domain.User
 import app.betmates.core.domain.toHex
@@ -69,7 +69,7 @@ class UserServiceITest : RepositoryTest() {
                 // given
                 val user = userService.save(User("Zinedine Zidane", "zizou@rm.es"))
 
-                val entity = UserRepository.findById(user.id!!)
+                val entity = UserEntity.findById(user.id!!)
 
                 // when
                 val domain = userService.mapToDomain(entity!!)

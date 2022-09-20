@@ -1,7 +1,7 @@
 package app.betmates.core.db
 
-import app.betmates.core.db.entity.PlayerEntity
-import app.betmates.core.db.entity.UserEntity
+import app.betmates.core.db.entity.PlayerTable
+import app.betmates.core.db.entity.UserTable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -39,10 +39,10 @@ abstract class RepositoryTest {
 
     fun Transaction.setUp() {
         addLogger(StdOutSqlLogger)
-        SchemaUtils.create(UserEntity, PlayerEntity)
+        SchemaUtils.create(UserTable, PlayerTable)
     }
 
     fun cleanUp() {
-        SchemaUtils.drop(UserEntity, PlayerEntity)
+        SchemaUtils.drop(UserTable, PlayerTable)
     }
 }

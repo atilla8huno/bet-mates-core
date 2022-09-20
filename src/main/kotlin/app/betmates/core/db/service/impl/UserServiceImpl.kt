@@ -2,13 +2,12 @@ package app.betmates.core.db.service.impl
 
 import app.betmates.core.db.DatabaseConnection
 import app.betmates.core.db.entity.UserEntity
-import app.betmates.core.db.entity.UserRepository
+import app.betmates.core.db.entity.UserTable
 import app.betmates.core.db.service.UserService
 import app.betmates.core.domain.Status
 import app.betmates.core.domain.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.and
@@ -19,7 +18,7 @@ class UserServiceImpl(
 ) : UserService {
 
     override suspend fun save(domain: User): User = newSuspendedTransaction(db = database) {
-        val userId = UserRepository.new {
+        val userId = UserEntity.new {
             name = domain.name
             email = domain.email
             username = domain.username
@@ -31,7 +30,7 @@ class UserServiceImpl(
     }
 
     override suspend fun update(domain: User): User = newSuspendedTransaction(db = database) {
-        UserRepository.findById(domain.id!!)!!
+        UserEntity.findById(domain.id!!)!!
             .apply {
                 name = domain.name
                 email = domain.email
@@ -43,22 +42,22 @@ class UserServiceImpl(
     }
 
     override suspend fun delete(domain: User): Unit = newSuspendedTransaction(db = database) {
-        UserRepository.findById(domain.id!!)?.delete()
+        UserEntity.findById(domain.id!!)?.delete()
     }
 
     override suspend fun findById(id: Long): User? = newSuspendedTransaction(db = database) {
-        UserRepository.findById(id)?.let {
+        UserEntity.findById(id)?.let {
             mapToDomain(it)
         }
     }
 
     override suspend fun findAll(): Flow<User> = newSuspendedTransaction(db = database) {
-        UserRepository.all().asFlow().map { mapToDomain(it) }
+        UserEntity.all().asFlow().map { mapToDomain(it) }
     }
 
     override suspend fun findByEmail(email: String): User? = newSuspendedTransaction(db = database) {
-        UserRepository.find {
-            UserEntity.email eq email
+        UserEntity.find {
+            UserTable.email eq email
         }.firstOrNull()?.let {
             mapToDomain(it)
         }
@@ -68,8 +67,8 @@ class UserServiceImpl(
         username: String,
         password: String
     ): User? = newSuspendedTransaction(db = database) {
-        UserRepository.find {
-            (UserEntity.username eq username) and (UserEntity.password eq User.encrypt(password))
+        UserEntity.find {
+            (UserTable.username eq username) and (UserTable.password eq User.encrypt(password))
         }.firstOrNull()?.let {
             mapToDomain(it)
         }
@@ -79,8 +78,8 @@ class UserServiceImpl(
         user: User,
         newPassword: String
     ): User? = newSuspendedTransaction(db = database) {
-        UserRepository.find {
-            (UserEntity.id eq user.id!!) and (UserEntity.password eq user.encryptedPassword!!)
+        UserEntity.find {
+            (UserTable.id eq user.id!!) and (UserTable.password eq user.encryptedPassword!!)
         }.firstOrNull()?.let {
             user.acceptPassword(newPassword)
             it.password = user.encryptedPassword
@@ -89,7 +88,7 @@ class UserServiceImpl(
         }
     }
 
-    override fun mapToDomain(entity: UserRepository): User {
+    override fun mapToDomain(entity: UserEntity): User {
         return User(
             name = entity.name,
             email = entity.email,
