@@ -9,6 +9,13 @@ class User(
 ) : Base() {
     companion object {
         private val SHA3: MessageDigest = MessageDigest.getInstance("SHA3-256")
+
+        fun encrypt(password: String): String {
+            val hashBytes: ByteArray = SHA3.digest(
+                password.toByteArray(Charsets.UTF_8)
+            )
+            return hashBytes.toHex()
+        }
     }
 
     private var status: Status = Status.ACTIVE
@@ -22,10 +29,7 @@ class User(
     }
 
     fun acceptPassword(password: String) {
-        val hashBytes: ByteArray = SHA3.digest(
-            password.toByteArray(Charsets.UTF_8)
-        )
-        encryptedPassword = hashBytes.toHex()
+        encryptedPassword = encrypt(password)
     }
 }
 

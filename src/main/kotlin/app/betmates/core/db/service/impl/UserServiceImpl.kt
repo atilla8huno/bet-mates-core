@@ -62,6 +62,18 @@ class UserServiceImpl(
         }
     }
 
+    override suspend fun findByUsernameAndPassword(
+        username: String,
+        password: String
+    ): User? = newSuspendedTransaction(db = database) {
+        UserRepository.find {
+            (UserEntity.username eq username) and (UserEntity.password eq User.encrypt(password))
+        }
+            .firstOrNull()?.let {
+                mapToDomain(it)
+            }
+    }
+
     override suspend fun updatePassword(
         user: User,
         newPassword: String

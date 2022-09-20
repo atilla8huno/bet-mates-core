@@ -218,6 +218,31 @@ class UserServiceITest : RepositoryTest() {
     }
 
     @Test
+    fun `should find an user in the database by username and password`() {
+        transaction {
+            setUp()
+
+            runTest {
+                // given
+                val username = "usercool"
+                val password = "123456"
+                val user = userService.save(
+                    User("User 1", "user@a.com", username).apply { acceptPassword(password) }
+                )
+
+                // when
+                val foundUser = userService.findByUsernameAndPassword(username, password)
+
+                // then
+                assertNotNull(foundUser)
+                assertEquals(user, foundUser)
+            }
+
+            cleanUp()
+        }
+    }
+
+    @Test
     fun `should update the password of an user in the database`() {
         transaction {
             setUp()
