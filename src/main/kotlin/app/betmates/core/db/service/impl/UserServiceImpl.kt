@@ -57,7 +57,9 @@ class UserServiceImpl(
     }
 
     override suspend fun findByEmail(email: String): User? = newSuspendedTransaction(db = database) {
-        UserRepository.find { UserEntity.email eq email }.firstOrNull()?.let {
+        UserRepository.find {
+            UserEntity.email eq email
+        }.firstOrNull()?.let {
             mapToDomain(it)
         }
     }
