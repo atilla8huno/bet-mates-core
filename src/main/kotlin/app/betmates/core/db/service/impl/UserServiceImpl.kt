@@ -92,7 +92,7 @@ class UserServiceImpl(
         return User(
             name = entity.name,
             email = entity.email,
-            username = entity.username!!
+            username = entity.username
         ).also { user ->
             user.id = entity.id.value
             if (entity.status == Status.INACTIVE.name) user.deactivate()

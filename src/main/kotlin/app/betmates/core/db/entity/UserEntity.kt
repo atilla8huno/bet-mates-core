@@ -1,5 +1,6 @@
 package app.betmates.core.db.entity
 
+import app.betmates.core.domain.Status
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -18,7 +19,12 @@ class UserEntity(id: EntityID<Long>) : LongEntity(id) {
 object UserTable : LongIdTable(name = "user") {
     val name = varchar("name", 255)
     val email = varchar("email", 255)
-    val username = varchar("username", 255).nullable()
+    val username = varchar("username", 255)
     val password = varchar("password", 255).nullable()
-    val status = varchar("status", 255).nullable()
+    val status = varchar("status", 255).default(Status.ACTIVE.name)
+
+    init {
+        uniqueIndex(email)
+        uniqueIndex(username)
+    }
 }

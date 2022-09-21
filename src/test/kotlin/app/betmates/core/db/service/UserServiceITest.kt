@@ -93,10 +93,10 @@ class UserServiceITest : RepositoryTest() {
 
             runTest {
                 // given
-                val user1 = userService.save(User("User 1", "user@1.com"))
-                val user2 = userService.save(User("User 2", "user@2.com"))
-                val user3 = userService.save(User("User 3", "user@3.com"))
-                val user4 = userService.save(User("User 4", "user@4.com"))
+                val user1 = userService.save(User("User 1", "user1@1.com"))
+                val user2 = userService.save(User("User 2", "user2@2.com"))
+                val user3 = userService.save(User("User 3", "user3@3.com"))
+                val user4 = userService.save(User("User 4", "user4@4.com"))
 
                 // when
                 val allUsers = userService.findAll()

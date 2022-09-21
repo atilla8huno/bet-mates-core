@@ -166,8 +166,8 @@ class PlayerServiceITest : RepositoryTest() {
 
             runTest {
                 // given
-                val user1 = userService.save(User("User 1", "user@1.com"))
-                val user2 = userService.save(User("User 2", "user@2.com"))
+                val user1 = userService.save(User("User 1", "user1@1.com"))
+                val user2 = userService.save(User("User 2", "user2@2.com"))
                 val player = playerService.save(Player(nickName = "CR7", user = user1))
 
                 assertEquals(player.user, user1)
