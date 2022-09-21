@@ -16,8 +16,8 @@ import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.addLogger
 import kotlin.test.BeforeTest
 
-@OptIn(ExperimentalCoroutinesApi::class)
-abstract class RepositoryTest {
+@ExperimentalCoroutinesApi
+internal abstract class RepositoryTest {
 
     lateinit var db: Database
 

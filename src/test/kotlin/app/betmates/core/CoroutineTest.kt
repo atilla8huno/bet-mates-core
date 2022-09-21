@@ -15,7 +15,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 @ExperimentalCoroutinesApi
-class CoroutineTest {
+internal class CoroutineTest {
 
     private val apiService = mockk<ApiService>()
 

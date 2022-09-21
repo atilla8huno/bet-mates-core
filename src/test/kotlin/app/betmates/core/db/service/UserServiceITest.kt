@@ -18,8 +18,8 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalCoroutinesApi::class)
-class UserServiceITest : RepositoryTest() {
+@ExperimentalCoroutinesApi
+internal class UserServiceITest : RepositoryTest() {
 
     private lateinit var userService: UserService
 
@@ -29,242 +29,224 @@ class UserServiceITest : RepositoryTest() {
     }
 
     @Test
-    override fun `should save the domain in the database`() {
-        transaction {
-            setUp()
+    override fun `should save the domain in the database`() = transaction {
+        setUp()
 
-            runTest {
-                // given
-                val user = User(
-                    name = "Alfa Romeo",
-                    email = "alfaromeo@alfaromeo.com"
-                )
-                assertNull(user.id)
+        runTest {
+            // given
+            val user = User(
+                name = "Alfa Romeo",
+                email = "alfaromeo@alfaromeo.com"
+            )
+            assertNull(user.id)
 
-                // when
-                val userSaved = userService.save(user)
-                val userFound = userService.findById(user.id!!)
+            // when
+            val userSaved = userService.saveOrUpdate(user)
+            val userFound = userService.findById(user.id!!)
 
-                // then
-                assertNotNull(userSaved)
-                assertNotNull(userFound)
-                assertEquals(userSaved, userFound)
+            // then
+            assertNotNull(userSaved)
+            assertNotNull(userFound)
+            assertEquals(userSaved, userFound)
 
-                assertEquals(userSaved.name, userFound.name)
-                assertEquals(userSaved.email, userFound.email)
-                assertEquals(userSaved.username, userFound.username)
-                assertEquals(userSaved.isActive(), userFound.isActive())
-            }
-
-            cleanUp()
+            assertEquals(userSaved.name, userFound.name)
+            assertEquals(userSaved.email, userFound.email)
+            assertEquals(userSaved.username, userFound.username)
+            assertEquals(userSaved.isActive(), userFound.isActive())
         }
+
+        cleanUp()
     }
 
     @Test
-    override fun `should map entity to domain`() {
-        transaction {
-            setUp()
+    override fun `should map entity to domain`() = transaction {
+        setUp()
 
-            runTest {
-                // given
-                val user = userService.save(User("Zinedine Zidane", "zizou@rm.es"))
+        runTest {
+            // given
+            val user = userService.save(User("Zinedine Zidane", "zizou@rm.es"))
 
-                val entity = UserEntity.findById(user.id!!)
+            val entity = UserEntity.findById(user.id!!)
 
-                // when
-                val domain = userService.mapToDomain(entity!!)
+            // when
+            val domain = userService.mapToDomain(entity!!)
 
-                // then
-                assertNotNull(domain)
-                assertEquals(user.name, domain.name)
-                assertEquals(user.email, domain.email)
-                assertEquals(user.username, domain.username)
-                assertEquals(user.isActive(), domain.isActive())
-            }
-
-            cleanUp()
+            // then
+            assertNotNull(domain)
+            assertEquals(user.name, domain.name)
+            assertEquals(user.email, domain.email)
+            assertEquals(user.username, domain.username)
+            assertEquals(user.isActive(), domain.isActive())
         }
+
+        cleanUp()
     }
 
     @Test
-    override fun `should find all records in the database`() {
-        transaction {
-            setUp()
+    override fun `should find all records in the database`() = transaction {
+        setUp()
 
-            runTest {
-                // given
-                val user1 = userService.save(User("User 1", "user1@1.com"))
-                val user2 = userService.save(User("User 2", "user2@2.com"))
-                val user3 = userService.save(User("User 3", "user3@3.com"))
-                val user4 = userService.save(User("User 4", "user4@4.com"))
+        runTest {
+            // given
+            val user1 = userService.save(User("User 1", "user1@1.com"))
+            val user2 = userService.save(User("User 2", "user2@2.com"))
+            val user3 = userService.save(User("User 3", "user3@3.com"))
+            val user4 = userService.save(User("User 4", "user4@4.com"))
 
-                // when
-                val allUsers = userService.findAll()
+            // when
+            val allUsers = userService.findAll()
 
-                // then
-                val list = mutableSetOf<User>()
-                allUsers.collect {
-                    list.add(it)
+            // then
+            val list = mutableSetOf<User>()
+            allUsers.collect {
+                list.add(it)
+            }
+
+            assertTrue { list.contains(user1) }
+            assertTrue { list.contains(user2) }
+            assertTrue { list.contains(user3) }
+            assertTrue { list.contains(user4) }
+        }
+
+        cleanUp()
+    }
+
+    @Test
+    override fun `should update the domain in the database`() = transaction {
+        setUp()
+
+        runTest {
+            // given
+            val user = userService.save(User("User 1", "user@1.com"))
+            assertTrue { user.isActive() }
+
+            var updatedUser = User("New Name", "new@email.com")
+                .apply {
+                    id = user.id
+                }.also {
+                    it.deactivate()
                 }
 
-                assertTrue { list.contains(user1) }
-                assertTrue { list.contains(user2) }
-                assertTrue { list.contains(user3) }
-                assertTrue { list.contains(user4) }
-            }
+            // when
+            updatedUser = userService.saveOrUpdate(updatedUser)
 
-            cleanUp()
+            // then
+            val foundUser = userService.findById(user.id!!)!!
+
+            assertEquals(updatedUser, foundUser)
+            assertNotEquals(user.name, foundUser.name)
+            assertNotEquals(user.email, foundUser.email)
+            assertNotEquals(user.username, foundUser.username)
+
+            assertFalse { foundUser.isActive() }
         }
+
+        cleanUp()
     }
 
     @Test
-    override fun `should update the domain in the database`() {
-        transaction {
-            setUp()
+    override fun `should delete the domain in the database`() = transaction {
+        setUp()
 
-            runTest {
-                // given
-                val user = userService.save(User("User 1", "user@1.com"))
-                assertTrue { user.isActive() }
+        runTest {
+            // given
+            val user = userService.save(User("User 1", "user@1.com"))
 
-                var updatedUser = User("New Name", "new@email.com")
-                    .apply {
-                        id = user.id
-                    }.also {
-                        it.deactivate()
-                    }
+            // when
+            userService.delete(user)
 
-                // when
-                updatedUser = userService.update(updatedUser)
+            // then
+            val foundUser = userService.findById(user.id!!)
 
-                // then
-                val foundUser = userService.findById(user.id!!)!!
-
-                assertEquals(updatedUser, foundUser)
-                assertNotEquals(user.name, foundUser.name)
-                assertNotEquals(user.email, foundUser.email)
-                assertNotEquals(user.username, foundUser.username)
-
-                assertFalse { foundUser.isActive() }
-            }
-
-            cleanUp()
+            assertNull(foundUser)
         }
+
+        cleanUp()
     }
 
     @Test
-    override fun `should delete the domain in the database`() {
-        transaction {
-            setUp()
+    override fun `should find a record in the database by id`() = transaction {
+        setUp()
 
-            runTest {
-                // given
-                val user = userService.save(User("User 1", "user@1.com"))
+        runTest {
+            // given
+            val user = userService.save(User("User 1", "user@1.com"))
 
-                // when
-                userService.delete(user)
+            // when
+            val foundUser = userService.findById(user.id!!)
 
-                // then
-                val foundUser = userService.findById(user.id!!)
-
-                assertNull(foundUser)
-            }
-
-            cleanUp()
+            // then
+            assertNotNull(foundUser)
+            assertEquals(user, foundUser)
         }
+
+        cleanUp()
     }
 
     @Test
-    override fun `should find a record in the database by id`() {
-        transaction {
-            setUp()
+    fun `should find an user in the database by email`() = transaction {
+        setUp()
 
-            runTest {
-                // given
-                val user = userService.save(User("User 1", "user@1.com"))
+        runTest {
+            // given
+            val email = "user@1.com"
+            val user = userService.save(User("User 1", email))
 
-                // when
-                val foundUser = userService.findById(user.id!!)
+            // when
+            val foundUser = userService.findByEmail(email)
 
-                // then
-                assertNotNull(foundUser)
-                assertEquals(user, foundUser)
-            }
-
-            cleanUp()
+            // then
+            assertNotNull(foundUser)
+            assertEquals(user, foundUser)
         }
+
+        cleanUp()
     }
 
     @Test
-    fun `should find an user in the database by email`() {
-        transaction {
-            setUp()
+    fun `should find an user in the database by username and password`() = transaction {
+        setUp()
 
-            runTest {
-                // given
-                val email = "user@1.com"
-                val user = userService.save(User("User 1", email))
+        runTest {
+            // given
+            val username = "usercool"
+            val password = "123456"
+            val user = userService.save(
+                User("User 1", "user@a.com", username).apply { acceptPassword(password) }
+            )
 
-                // when
-                val foundUser = userService.findByEmail(email)
+            // when
+            val foundUser = userService.findByUsernameAndPassword(username, password)
 
-                // then
-                assertNotNull(foundUser)
-                assertEquals(user, foundUser)
-            }
-
-            cleanUp()
+            // then
+            assertNotNull(foundUser)
+            assertEquals(user, foundUser)
         }
+
+        cleanUp()
     }
 
     @Test
-    fun `should find an user in the database by username and password`() {
-        transaction {
-            setUp()
+    fun `should update the password of an user in the database`() = transaction {
+        setUp()
 
-            runTest {
-                // given
-                val username = "usercool"
-                val password = "123456"
-                val user = userService.save(
-                    User("User 1", "user@a.com", username).apply { acceptPassword(password) }
-                )
+        runTest {
+            // given
+            var user = User("User 1", "user@1.com")
+            val oldPassword = "123abc"
+            user.acceptPassword(oldPassword)
 
-                // when
-                val foundUser = userService.findByUsernameAndPassword(username, password)
+            user = userService.save(user)
 
-                // then
-                assertNotNull(foundUser)
-                assertEquals(user, foundUser)
-            }
+            // when
+            val newPassword = "Th1sI5M0r3S4c4r3!!!"
+            user = userService.updatePassword(user, newPassword)!!
 
-            cleanUp()
+            // then
+            assertEquals(encrypt(newPassword), user.encryptedPassword)
         }
-    }
 
-    @Test
-    fun `should update the password of an user in the database`() {
-        transaction {
-            setUp()
-
-            runTest {
-                // given
-                var user = User("User 1", "user@1.com")
-                val oldPassword = "123abc"
-                user.acceptPassword(oldPassword)
-
-                user = userService.save(user)
-
-                // when
-                val newPassword = "Th1sI5M0r3S4c4r3!!!"
-                user = userService.updatePassword(user, newPassword)!!
-
-                // then
-                assertEquals(encrypt(newPassword), user.encryptedPassword)
-            }
-
-            cleanUp()
-        }
+        cleanUp()
     }
 
     private fun encrypt(password: String): String {

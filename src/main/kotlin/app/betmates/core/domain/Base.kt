@@ -15,3 +15,8 @@ sealed class Base(
         return id?.hashCode() ?: 0
     }
 }
+
+enum class Status {
+    ACTIVE,
+    INACTIVE
+}

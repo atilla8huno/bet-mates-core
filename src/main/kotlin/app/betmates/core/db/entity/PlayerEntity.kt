@@ -10,8 +10,6 @@ class PlayerEntity(id: EntityID<Long>) : LongEntity(id) {
 
     var nickName by PlayerTable.nickName
     var user by UserEntity referencedOn PlayerTable.user
-
-    var teams by TeamEntity via PlayerTeamTable
 }
 
 object PlayerTable : LongIdTable(name = "player") {
