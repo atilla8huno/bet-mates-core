@@ -18,7 +18,8 @@ class User(
         }
     }
 
-    private var status: Status = Status.ACTIVE
+    var status: Status = Status.ACTIVE
+        private set
     var encryptedPassword: String? = null
         private set
 

@@ -8,8 +8,8 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 class PlayerTeamEntity(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<PlayerTeamEntity>(PlayerTeamTable)
 
-    val player by PlayerEntity referencedOn PlayerTeamTable.player
-    val team by TeamEntity referencedOn PlayerTeamTable.team
+    var player by PlayerEntity referencedOn PlayerTeamTable.player
+    var team by TeamEntity referencedOn PlayerTeamTable.team
 }
 
 object PlayerTeamTable : LongIdTable(name = "player_team") {

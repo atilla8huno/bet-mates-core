@@ -136,6 +136,7 @@ internal class PlayerServiceITest : RepositoryTest() {
             // given
             val user = userService.save(User("User 1", "user@1.com"))
             val player = playerService.save(Player(nickName = "CR7", user = user))
+            assertNotNull(playerService.findById(player.id!!))
 
             // when
             playerService.delete(player)

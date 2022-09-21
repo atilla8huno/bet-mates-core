@@ -65,7 +65,6 @@ internal class UserServiceITest : RepositoryTest() {
         runTest {
             // given
             val user = userService.save(User("Zinedine Zidane", "zizou@rm.es"))
-
             val entity = UserEntity.findById(user.id!!)
 
             // when
@@ -151,6 +150,7 @@ internal class UserServiceITest : RepositoryTest() {
         runTest {
             // given
             val user = userService.save(User("User 1", "user@1.com"))
+            assertNotNull(userService.findById(user.id!!))
 
             // when
             userService.delete(user)

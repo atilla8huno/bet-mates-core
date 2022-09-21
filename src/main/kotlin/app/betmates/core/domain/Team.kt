@@ -8,6 +8,8 @@ sealed class Team(
     var status: Status = Status.ACTIVE
         private set
 
+    fun isActive() = status == Status.ACTIVE
+
     fun deactivate() {
         status = Status.INACTIVE
     }

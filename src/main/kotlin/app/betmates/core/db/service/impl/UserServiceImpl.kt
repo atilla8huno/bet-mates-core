@@ -22,7 +22,7 @@ class UserServiceImpl(
             name = domain.name
             email = domain.email
             username = domain.username
-            status = if (domain.isActive()) Status.ACTIVE.name else Status.INACTIVE.name
+            status = domain.status.name
             password = domain.encryptedPassword
         }.id.value
 
@@ -35,7 +35,7 @@ class UserServiceImpl(
                 name = domain.name
                 email = domain.email
                 username = domain.username
-                status = if (domain.isActive()) Status.ACTIVE.name else Status.INACTIVE.name
+                status = domain.status.name
             }.let {
                 mapToDomain(it)
             }

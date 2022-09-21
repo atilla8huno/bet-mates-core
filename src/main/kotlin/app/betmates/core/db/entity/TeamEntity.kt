@@ -9,9 +9,9 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 class TeamEntity(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<TeamEntity>(TeamTable)
 
-    val name by TeamTable.name
-    val type by TeamTable.type
-    val status by TeamTable.status
+    var name by TeamTable.name
+    var type by TeamTable.type
+    var status by TeamTable.status
 
     var players by PlayerEntity via PlayerTeamTable
 }
