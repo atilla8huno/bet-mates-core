@@ -6,10 +6,11 @@ import app.betmates.core.db.service.impl.PlayerServiceImpl
 import app.betmates.core.db.service.impl.TeamServiceImpl
 import app.betmates.core.db.service.impl.UserServiceImpl
 import app.betmates.core.domain.FootballTeam
+import app.betmates.core.domain.Player
 import app.betmates.core.domain.SnookerTeam
 import app.betmates.core.domain.Team
+import app.betmates.core.domain.User
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.test.runTest
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.BeforeTest
@@ -77,7 +78,7 @@ internal class TeamServiceITest : RepositoryTest() {
 
         runTest {
             // given
-            val team = teamService.save(SnookerTeam("Jimmy White"))
+            val team = teamService.saveOrUpdate(SnookerTeam("Jimmy White"))
             assertTrue { team.isActive() }
 
             var updatedTeam: Team = FootballTeam("Real Madrid")
@@ -188,6 +189,109 @@ internal class TeamServiceITest : RepositoryTest() {
             assertEquals(team.name, domain.name)
             assertEquals(team.type, domain.type)
             assertEquals(team.status, domain.status)
+        }
+
+        cleanUp()
+    }
+
+    @Test
+    fun `should save the team and its players in the database =`() = transaction {
+        setUp()
+
+        runTest {
+            // given
+            val user1 = User("Cristiano Ronaldo", "cris@cr7.com")
+            val user2 = User("Ronaldo Fenômeno", "ronaldo@r9.com")
+            val player1 = Player("CR7", user = user1)
+            val player2 = Player("R9", user = user2)
+            val team = FootballTeam("Judd Trump").apply {
+                addPlayer(player1)
+                addPlayer(player2)
+            }
+
+            // when
+            val savedTeam = teamService.save(team)
+
+            // then
+            val players = teamService.findById(savedTeam.id!!)!!.players()
+
+            assertEquals(
+                2,
+                players.asSequence().filter {
+                    it.nickName == player1.nickName || it.nickName == player2.nickName
+                }.count()
+            )
+        }
+
+        cleanUp()
+    }
+
+    @Test
+    fun `should add players to an existing team in the database`() = transaction {
+        setUp()
+
+        runTest {
+            // given
+            val user1 = User("Cristiano Ronaldo", "cris@cr7.com")
+            val player1 = Player("CR7", user = user1)
+            val team = FootballTeam("Judd Trump").apply {
+                addPlayer(player1)
+            }
+            var savedTeam = teamService.save(team)
+
+            // when
+            val user2 = User("Ronaldo Fenômeno", "ronaldo@r9.com")
+            val player2 = Player("R9", user = user2)
+
+            savedTeam.addPlayer(player2)
+
+            savedTeam = teamService.update(team)
+
+            // then
+            val players = teamService.findById(savedTeam.id!!)!!.players()
+
+            assertEquals(
+                2,
+                players.count {
+                    it.nickName == player1.nickName || it.nickName == player2.nickName
+                }
+            )
+        }
+
+        cleanUp()
+    }
+
+    @Test
+    fun `should remove players from the team in the database`() = transaction {
+        setUp()
+
+        runTest {
+            // given
+            val user1 = User("Cristiano Ronaldo", "cris@cr7.com")
+            val user2 = User("Ronaldo Fenômeno", "ronaldo@r9.com")
+            val player1 = playerService.save(Player("CR7", user = user1))
+            val player2 = playerService.save(Player("R9", user = user2))
+            val team = FootballTeam("Judd Trump").apply {
+                addPlayer(player1)
+                addPlayer(player2)
+            }
+            var savedTeam = teamService.save(team)
+
+            // when
+            savedTeam.removePlayer(player2)
+
+            savedTeam = teamService.update(savedTeam)
+
+            // then
+            val players = teamService.findById(savedTeam.id!!)!!.players()
+
+            assertEquals(1, players.size)
+            assertEquals(
+                1,
+                players.count {
+                    it.nickName == player1.nickName
+                }
+            )
         }
 
         cleanUp()

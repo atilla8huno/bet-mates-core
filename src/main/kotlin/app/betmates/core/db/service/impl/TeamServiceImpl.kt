@@ -1,6 +1,7 @@
 package app.betmates.core.db.service.impl
 
 import app.betmates.core.db.DatabaseConnection
+import app.betmates.core.db.entity.PlayerEntity
 import app.betmates.core.db.entity.TeamEntity
 import app.betmates.core.db.service.PlayerService
 import app.betmates.core.db.service.TeamService
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SizedCollection
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class TeamServiceImpl(
@@ -21,21 +23,41 @@ class TeamServiceImpl(
 ) : TeamService {
 
     override suspend fun save(domain: Team): Team = newSuspendedTransaction(db = database) {
+        val playersList = domain.players().map {
+            if (it.id == null) playerService.save(it) else it
+        }
+
         val teamId = TeamEntity.new {
             name = domain.name
             type = domain.type.name
             status = domain.status.name
+
+            players = SizedCollection(
+                playersList.map {
+                    PlayerEntity[it.id!!]
+                }
+            )
         }.id.value
 
         domain.apply { id = teamId }
     }
 
     override suspend fun update(domain: Team): Team = newSuspendedTransaction(db = database) {
+        val playersList = domain.players().map {
+            if (it.id == null) playerService.save(it) else it
+        }
+
         TeamEntity.findById(domain.id!!)!!
             .apply {
                 name = domain.name
                 type = domain.type.name
                 status = domain.status.name
+
+                players = SizedCollection(
+                    playersList.map {
+                        PlayerEntity[it.id!!]
+                    }
+                )
             }.let {
                 mapToDomain(it)
             }
@@ -62,6 +84,9 @@ class TeamServiceImpl(
             else -> throw IllegalStateException("TeamType not mapped at ${this::class.simpleName}#mapToDomain")
         }.also { team ->
             team.id = entity.id.value
+            entity.players.forEach {
+                team.addPlayer(playerService.mapToDomain(it))
+            }
             if (entity.status == Status.INACTIVE.name) team.deactivate()
         }
     }

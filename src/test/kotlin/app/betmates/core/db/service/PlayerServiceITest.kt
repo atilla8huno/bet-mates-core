@@ -79,7 +79,7 @@ internal class PlayerServiceITest : RepositoryTest() {
 
         runTest {
             // given
-            val user = userService.save(User("Zinedine Zidane", "zizou@rm.es"))
+            val user = User("Zinedine Zidane", "zizou@rm.es")
             val player = playerService.save(Player(nickName = "Zizou", user = user))
 
             val entity = PlayerEntity.findById(player.id!!)
@@ -134,7 +134,7 @@ internal class PlayerServiceITest : RepositoryTest() {
 
         runTest {
             // given
-            val user = userService.save(User("User 1", "user@1.com"))
+            val user = User("User 1", "user@1.com")
             val player = playerService.save(Player(nickName = "CR7", user = user))
             assertNotNull(playerService.findById(player.id!!))
 

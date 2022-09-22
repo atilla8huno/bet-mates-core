@@ -19,7 +19,13 @@ import kotlin.test.BeforeTest
 @ExperimentalCoroutinesApi
 internal abstract class RepositoryTest {
 
-    lateinit var db: Database
+    val db by lazy {
+        Database.connect(
+            url = "jdbc:h2:mem:test",
+            driver = "org.h2.Driver",
+            user = "root"
+        )
+    }
 
     abstract fun `should save the domain in the database`()
     abstract fun `should update the domain in the database`()
@@ -31,12 +37,6 @@ internal abstract class RepositoryTest {
     @BeforeTest
     fun connect() {
         Dispatchers.setMain(StandardTestDispatcher(TestScope().testScheduler))
-
-        db = Database.connect(
-            url = "jdbc:h2:mem:test",
-            driver = "org.h2.Driver",
-            user = "root"
-        )
     }
 
     fun Transaction.setUp() {

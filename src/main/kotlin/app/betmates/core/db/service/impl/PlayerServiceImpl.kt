@@ -18,9 +18,15 @@ class PlayerServiceImpl(
 ) : PlayerService {
 
     override suspend fun save(domain: Player): Player = newSuspendedTransaction(db = database) {
+        val userEntity = domain.user.id?.let {
+            UserEntity[it]
+        } ?: userService.save(domain.user).let {
+            UserEntity[it.id!!]
+        }
+
         val playerId = PlayerEntity.new {
             nickName = domain.nickName
-            user = UserEntity.findById(domain.user.id!!)!!
+            user = userEntity
         }.id.value
 
         domain.apply { id = playerId }
