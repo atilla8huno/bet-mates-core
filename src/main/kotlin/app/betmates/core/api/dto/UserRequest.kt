@@ -1,8 +1,9 @@
 package app.betmates.core.api.dto
 
 import app.betmates.core.domain.User
+import kotlinx.serialization.Serializable
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class UserRequest(
     val name: String,
     val email: String,

@@ -38,20 +38,16 @@ internal abstract class ControllerTest {
     }
 
     @BeforeTest
-    fun connect() {
+    fun connect() = transaction {
         Dispatchers.setMain(StandardTestDispatcher(TestScope().testScheduler))
+        addLogger(StdOutSqlLogger)
 
         DatabaseConnection.database
-        transaction {
-            addLogger(StdOutSqlLogger)
-            SchemaUtils.create(UserTable, PlayerTable, TeamTable, PlayerTeamTable)
-        }
+        SchemaUtils.create(UserTable, PlayerTable, TeamTable, PlayerTeamTable)
     }
 
     @AfterTest
-    fun cleanUp() {
-        transaction {
-            SchemaUtils.drop(UserTable, PlayerTable, TeamTable, PlayerTeamTable)
-        }
+    fun cleanUp() = transaction {
+        SchemaUtils.drop(UserTable, PlayerTable, TeamTable, PlayerTeamTable)
     }
 }
