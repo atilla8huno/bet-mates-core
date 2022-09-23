@@ -9,10 +9,7 @@ internal class PropertiesUtilUTest {
     @Test
     fun `should have defined JDBC URL`() {
         // given
-        val expectedJdbcUrl = "jdbc:postgresql://" +
-            "${DatabaseProperties.host}:${DatabaseProperties.port}/" +
-            "${DatabaseProperties.database}?" +
-            "options=${DatabaseProperties.options}"
+        val expectedJdbcUrl = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"
 
         // when
         val jdbcUrl = DatabaseProperties.jdbcUrl

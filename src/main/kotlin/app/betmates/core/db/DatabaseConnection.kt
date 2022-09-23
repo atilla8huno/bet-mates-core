@@ -9,7 +9,7 @@ object DatabaseConnection {
             url = DatabaseProperties.jdbcUrl,
             driver = DatabaseProperties.driver!!,
             user = DatabaseProperties.username!!,
-            password = DatabaseProperties.password!!
+            password = DatabaseProperties.password ?: ""
         )
     }
 }

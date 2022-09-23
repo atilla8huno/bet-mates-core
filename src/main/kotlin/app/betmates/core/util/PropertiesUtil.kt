@@ -19,7 +19,7 @@ object DatabaseProperties : PropertiesUtil() {
     val options = getProperty("ktor.db.options")
     val driver = getProperty("ktor.db.driver")
 
-    val jdbcUrl = "jdbc:postgresql://$host:$port/$database?options=$options"
+    val jdbcUrl = getProperty("ktor.db.url") ?: "jdbc:postgresql://$host:$port/$database?options=$options"
 }
 
 object JwtProperties : PropertiesUtil() {

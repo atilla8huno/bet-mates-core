@@ -25,14 +25,12 @@ internal class PlayerServiceITest : RepositoryTest() {
 
     @BeforeTest
     fun init() {
-        userService = UserServiceImpl(database = db)
-        playerService = PlayerServiceImpl(userService, database = db)
+        userService = UserServiceImpl()
+        playerService = PlayerServiceImpl(userService)
     }
 
     @Test
     override fun `should save the domain in the database`() = transaction {
-        setUp()
-
         runTest {
             // given
             val user = userService.save(User("Cristiano Ronaldo", "cris@cr7.com"))
@@ -49,14 +47,10 @@ internal class PlayerServiceITest : RepositoryTest() {
             assertEquals(player.nickName, savedPlayer.nickName)
             assertEquals(player.memberOf(), savedPlayer.memberOf())
         }
-
-        cleanUp()
     }
 
     @Test
     override fun `should find a record in the database by id`() = transaction {
-        setUp()
-
         runTest {
             // given
             val user = userService.save(User("Cristiano Ronaldo", "cris@cr7.com"))
@@ -69,14 +63,10 @@ internal class PlayerServiceITest : RepositoryTest() {
             assertNotNull(foundPlayer)
             assertEquals(player, foundPlayer)
         }
-
-        cleanUp()
     }
 
     @Test
     override fun `should map entity to domain`() = transaction {
-        setUp()
-
         runTest {
             // given
             val user = User("Zinedine Zidane", "zizou@rm.es")
@@ -94,14 +84,10 @@ internal class PlayerServiceITest : RepositoryTest() {
             assertEquals(player.memberOf(), domain.memberOf())
             assertEquals(player.user, domain.user)
         }
-
-        cleanUp()
     }
 
     @Test
     override fun `should find all records in the database`() = transaction {
-        setUp()
-
         runTest {
             // given
             val user = userService.save(User("User 1", "user@1.com"))
@@ -124,14 +110,10 @@ internal class PlayerServiceITest : RepositoryTest() {
             assertTrue { list.contains(player3) }
             assertTrue { list.contains(player4) }
         }
-
-        cleanUp()
     }
 
     @Test
     override fun `should delete the domain in the database`() = transaction {
-        setUp()
-
         runTest {
             // given
             val user = User("User 1", "user@1.com")
@@ -146,14 +128,10 @@ internal class PlayerServiceITest : RepositoryTest() {
 
             assertNull(foundPlayer)
         }
-
-        cleanUp()
     }
 
     @Test
     override fun `should update the domain in the database`() = transaction {
-        setUp()
-
         runTest {
             // given
             val user1 = userService.save(User("User 1", "user1@1.com"))
@@ -181,7 +159,5 @@ internal class PlayerServiceITest : RepositoryTest() {
             assertNotEquals(player.user, foundPlayer.user)
             assertEquals(foundPlayer.user, user2)
         }
-
-        cleanUp()
     }
 }

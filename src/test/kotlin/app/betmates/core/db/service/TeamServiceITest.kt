@@ -33,16 +33,14 @@ internal class TeamServiceITest : RepositoryTest() {
 
     @BeforeTest
     fun init() {
-        userService = UserServiceImpl(database = db)
-        playerService = PlayerServiceImpl(userService, database = db)
+        userService = UserServiceImpl()
+        playerService = PlayerServiceImpl(userService)
 
-        teamService = TeamServiceImpl(playerService, database = db)
+        teamService = TeamServiceImpl(playerService)
     }
 
     @Test
     override fun `should save the domain in the database`() = transaction {
-        setUp()
-
         runTest {
             // given
             val team1 = FootballTeam("Real Madrid")
@@ -69,14 +67,10 @@ internal class TeamServiceITest : RepositoryTest() {
             assertEquals(foundTeam2.type, savedSnookerTeam.type)
             assertEquals(foundTeam2.status, savedSnookerTeam.status)
         }
-
-        cleanUp()
     }
 
     @Test
     override fun `should update the domain in the database`() = transaction {
-        setUp()
-
         runTest {
             // given
             val team = teamService.saveOrUpdate(SnookerTeam("Jimmy White"))
@@ -102,14 +96,10 @@ internal class TeamServiceITest : RepositoryTest() {
 
             assertFalse { foundTeam.isActive() }
         }
-
-        cleanUp()
     }
 
     @Test
     override fun `should delete the domain in the database`() = transaction {
-        setUp()
-
         runTest {
             // given
             val team = teamService.save(FootballTeam("Real Madrid"))
@@ -122,14 +112,10 @@ internal class TeamServiceITest : RepositoryTest() {
             val foundTeam = teamService.findById(team.id!!)
             assertNull(foundTeam)
         }
-
-        cleanUp()
     }
 
     @Test
     override fun `should find a record in the database by id`() = transaction {
-        setUp()
-
         runTest {
             // given
             val savedFootballTeam = teamService.save(FootballTeam("Real Madrid"))
@@ -140,14 +126,10 @@ internal class TeamServiceITest : RepositoryTest() {
             // then
             assertNotNull(foundTeam)
         }
-
-        cleanUp()
     }
 
     @Test
     override fun `should find all records in the database`() = transaction {
-        setUp()
-
         runTest {
             // given
             val team1 = teamService.save(FootballTeam("Real Madrid"))
@@ -169,14 +151,10 @@ internal class TeamServiceITest : RepositoryTest() {
             assertTrue { list.contains(team3) }
             assertTrue { list.contains(team4) }
         }
-
-        cleanUp()
     }
 
     @Test
     override fun `should map entity to domain`() = transaction {
-        setUp()
-
         runTest {
             // given
             val team = teamService.save(SnookerTeam("Judd Trump"))
@@ -191,14 +169,10 @@ internal class TeamServiceITest : RepositoryTest() {
             assertEquals(team.type, domain.type)
             assertEquals(team.status, domain.status)
         }
-
-        cleanUp()
     }
 
     @Test
     fun `should save the team and its players in the database =`() = transaction {
-        setUp()
-
         runTest {
             // given
             val user1 = User("Cristiano Ronaldo", "cris@cr7.com")
@@ -223,14 +197,10 @@ internal class TeamServiceITest : RepositoryTest() {
                 }.count()
             )
         }
-
-        cleanUp()
     }
 
     @Test
     fun `should add players to an existing team in the database`() = transaction {
-        setUp()
-
         runTest {
             // given
             val user1 = User("Cristiano Ronaldo", "cris@cr7.com")
@@ -258,14 +228,10 @@ internal class TeamServiceITest : RepositoryTest() {
                 }
             )
         }
-
-        cleanUp()
     }
 
     @Test
     fun `should remove players from the team in the database`() = transaction {
-        setUp()
-
         runTest {
             // given
             val user1 = User("Cristiano Ronaldo", "cris@cr7.com")
@@ -294,14 +260,10 @@ internal class TeamServiceITest : RepositoryTest() {
                 }
             )
         }
-
-        cleanUp()
     }
 
     @Test
     fun `should find teams by name in the database`() = transaction {
-        setUp()
-
         runTest {
             // given
             val team1 = teamService.save(FootballTeam("Real Madrid FC"))
@@ -326,7 +288,5 @@ internal class TeamServiceITest : RepositoryTest() {
 
             assertFalse { list.contains(team5) }
         }
-
-        cleanUp()
     }
 }

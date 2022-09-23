@@ -12,9 +12,9 @@ fun main(args: Array<String>): Unit =
 
 @Suppress("unused")
 fun Application.module() {
-    configureSerialization()
     configureMonitoring()
     configureHTTP()
     configureRouting()
+    configureSerialization()
     configureAuthentication()
 }

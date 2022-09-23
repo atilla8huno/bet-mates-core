@@ -25,13 +25,11 @@ internal class UserServiceITest : RepositoryTest() {
 
     @BeforeTest
     fun init() {
-        userService = UserServiceImpl(database = db)
+        userService = UserServiceImpl()
     }
 
     @Test
     override fun `should save the domain in the database`() = transaction {
-        setUp()
-
         runTest {
             // given
             val user = User(
@@ -54,14 +52,10 @@ internal class UserServiceITest : RepositoryTest() {
             assertEquals(userSaved.username, userFound.username)
             assertEquals(userSaved.isActive(), userFound.isActive())
         }
-
-        cleanUp()
     }
 
     @Test
     override fun `should map entity to domain`() = transaction {
-        setUp()
-
         runTest {
             // given
             val user = userService.save(User("Zinedine Zidane", "zizou@rm.es"))
@@ -77,14 +71,10 @@ internal class UserServiceITest : RepositoryTest() {
             assertEquals(user.username, domain.username)
             assertEquals(user.isActive(), domain.isActive())
         }
-
-        cleanUp()
     }
 
     @Test
     override fun `should find all records in the database`() = transaction {
-        setUp()
-
         runTest {
             // given
             val user1 = userService.save(User("User 1", "user1@1.com"))
@@ -106,14 +96,10 @@ internal class UserServiceITest : RepositoryTest() {
             assertTrue { list.contains(user3) }
             assertTrue { list.contains(user4) }
         }
-
-        cleanUp()
     }
 
     @Test
     override fun `should update the domain in the database`() = transaction {
-        setUp()
-
         runTest {
             // given
             val user = userService.save(User("User 1", "user@1.com"))
@@ -139,14 +125,10 @@ internal class UserServiceITest : RepositoryTest() {
 
             assertFalse { foundUser.isActive() }
         }
-
-        cleanUp()
     }
 
     @Test
     override fun `should delete the domain in the database`() = transaction {
-        setUp()
-
         runTest {
             // given
             val user = userService.save(User("User 1", "user@1.com"))
@@ -160,14 +142,10 @@ internal class UserServiceITest : RepositoryTest() {
 
             assertNull(foundUser)
         }
-
-        cleanUp()
     }
 
     @Test
     override fun `should find a record in the database by id`() = transaction {
-        setUp()
-
         runTest {
             // given
             val user = userService.save(User("User 1", "user@1.com"))
@@ -179,14 +157,10 @@ internal class UserServiceITest : RepositoryTest() {
             assertNotNull(foundUser)
             assertEquals(user, foundUser)
         }
-
-        cleanUp()
     }
 
     @Test
     fun `should find an user in the database by email`() = transaction {
-        setUp()
-
         runTest {
             // given
             val email = "user@1.com"
@@ -199,14 +173,10 @@ internal class UserServiceITest : RepositoryTest() {
             assertNotNull(foundUser)
             assertEquals(user, foundUser)
         }
-
-        cleanUp()
     }
 
     @Test
     fun `should find an user in the database by username and password`() = transaction {
-        setUp()
-
         runTest {
             // given
             val username = "usercool"
@@ -222,14 +192,10 @@ internal class UserServiceITest : RepositoryTest() {
             assertNotNull(foundUser)
             assertEquals(user, foundUser)
         }
-
-        cleanUp()
     }
 
     @Test
     fun `should update the password of an user in the database`() = transaction {
-        setUp()
-
         runTest {
             // given
             var user = User("User 1", "user@1.com")
@@ -245,8 +211,6 @@ internal class UserServiceITest : RepositoryTest() {
             // then
             assertEquals(encrypt(newPassword), user.encryptedPassword)
         }
-
-        cleanUp()
     }
 
     private fun encrypt(password: String): String {
