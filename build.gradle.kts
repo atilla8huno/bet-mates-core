@@ -63,6 +63,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junit_version")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
+    testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
     testImplementation("io.mockk:mockk:$mockk_version")
     testImplementation("com.h2database:h2:$h2_version")
 

@@ -15,7 +15,7 @@ fun Application.configureRouting() {
         }
 
         // routes that require authentication
-        authenticate("auth-jwt") {
+        authenticate(AUTH_JWT) {
         }
     }
 }

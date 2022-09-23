@@ -11,6 +11,8 @@ import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
 import io.ktor.server.response.respond
 
+const val AUTH_JWT = "auth-jwt"
+
 fun Application.configureAuthentication() {
     val secret = JwtProperties.secret
     val audience = JwtProperties.audience
@@ -18,7 +20,7 @@ fun Application.configureAuthentication() {
     val jwtRealm = JwtProperties.realm
 
     install(Authentication) {
-        jwt("auth-jwt") {
+        jwt(AUTH_JWT) {
             realm = jwtRealm!!
 
             verifier(
