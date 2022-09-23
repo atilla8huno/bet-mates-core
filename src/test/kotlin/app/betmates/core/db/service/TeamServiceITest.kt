@@ -11,6 +11,7 @@ import app.betmates.core.domain.SnookerTeam
 import app.betmates.core.domain.Team
 import app.betmates.core.domain.User
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.toCollection
 import kotlinx.coroutines.test.runTest
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.BeforeTest
@@ -303,25 +304,27 @@ internal class TeamServiceITest : RepositoryTest() {
 
         runTest {
             // given
-            val team1 = teamService.save(FootballTeam("Real Madrid"))
-            val team2 = teamService.save(FootballTeam("Real Betis"))
-            val team3 = teamService.save(FootballTeam("Real Sociedad"))
-            val team4 = teamService.save(FootballTeam("Liverpool"))
+            val team1 = teamService.save(FootballTeam("Real Madrid FC"))
+            val team2 = teamService.save(FootballTeam("FC Betis Real"))
+            val team3 = teamService.save(FootballTeam("FC Real Sociedad"))
+            val team4 = teamService.save(FootballTeam("An Unrealistic Team"))
+            val team5 = teamService.save(FootballTeam("Liverpool"))
 
             // when
             val teams = teamService.findByName("real")
 
             // then
             val list = mutableSetOf<Team>()
-            teams.collect {
-                list.add(it)
-            }
+            teams.toCollection(list)
 
-            assertEquals(3, list.size)
+            assertEquals(4, list.size)
+
             assertTrue { list.contains(team1) }
             assertTrue { list.contains(team2) }
             assertTrue { list.contains(team3) }
-            assertFalse { list.contains(team4) }
+            assertTrue { list.contains(team4) }
+
+            assertFalse { list.contains(team5) }
         }
 
         cleanUp()
