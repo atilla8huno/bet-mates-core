@@ -51,7 +51,7 @@ docker pull ghcr.io/bet-mates/bet-mates-core:latest
 ```
 Then run:
 ```
-docker run ghcr.io/bet-mates/bet-mates-core:latest -d -p 8080:8080
+docker run -p 8080:8080 ghcr.io/bet-mates/bet-mates-core:latest -d
 ```
 Now it should be available at http://localhost:8080/
 
