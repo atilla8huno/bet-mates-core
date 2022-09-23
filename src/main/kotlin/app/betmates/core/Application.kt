@@ -1,5 +1,6 @@
 package app.betmates.core
 
+import app.betmates.core.ktor.plugins.configureAuthentication
 import app.betmates.core.ktor.plugins.configureHTTP
 import app.betmates.core.ktor.plugins.configureMonitoring
 import app.betmates.core.ktor.plugins.configureRouting
@@ -15,4 +16,5 @@ fun Application.module() {
     configureMonitoring()
     configureHTTP()
     configureRouting()
+    configureAuthentication()
 }

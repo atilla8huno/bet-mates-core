@@ -21,3 +21,10 @@ object DatabaseProperties : PropertiesUtil() {
 
     val jdbcUrl = "jdbc:postgresql://$host:$port/$database?options=$options"
 }
+
+object JwtProperties : PropertiesUtil() {
+    val secret = getProperty("ktor.jwt.secret")
+    val issuer = getProperty("ktor.jwt.issuer")
+    val audience = getProperty("ktor.jwt.audience")
+    val realm = getProperty("ktor.jwt.realm")
+}

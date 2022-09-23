@@ -33,4 +33,15 @@ internal class PropertiesUtilUTest {
         assertFalse { DatabaseProperties.options.isNullOrBlank() }
         assertFalse { DatabaseProperties.driver.isNullOrBlank() }
     }
+
+    @Test
+    fun `should read JwtProperties properties`() {
+        // given JwtProperties properties
+        // when access its fields
+        // then should be defined in application.conf
+        assertFalse { JwtProperties.secret.isNullOrBlank() }
+        assertFalse { JwtProperties.issuer.isNullOrBlank() }
+        assertFalse { JwtProperties.audience.isNullOrBlank() }
+        assertFalse { JwtProperties.realm.isNullOrBlank() }
+    }
 }
