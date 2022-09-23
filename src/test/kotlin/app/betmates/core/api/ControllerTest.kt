@@ -5,6 +5,10 @@ import app.betmates.core.db.entity.PlayerTable
 import app.betmates.core.db.entity.PlayerTeamTable
 import app.betmates.core.db.entity.TeamTable
 import app.betmates.core.db.entity.UserTable
+import app.betmates.core.ktor.plugins.configureRouting
+import app.betmates.core.ktor.plugins.configureSerialization
+import io.ktor.server.config.MapApplicationConfig
+import io.ktor.server.testing.testApplication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -19,6 +23,19 @@ import kotlin.test.BeforeTest
 
 @ExperimentalCoroutinesApi
 internal abstract class ControllerTest {
+
+    @BeforeTest
+    fun setUp() = testApplication {
+        environment {
+            config = MapApplicationConfig(
+                "ktor.environment" to "test"
+            )
+        }
+        application {
+            configureRouting()
+            configureSerialization()
+        }
+    }
 
     @BeforeTest
     fun connect() {

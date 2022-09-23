@@ -1,15 +1,12 @@
 package app.betmates.core.api
 
 import app.betmates.core.api.dto.UserRequest
-import app.betmates.core.ktor.plugins.configureRouting
-import app.betmates.core.ktor.plugins.configureSerialization
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import io.ktor.server.config.MapApplicationConfig
 import io.ktor.server.testing.testApplication
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.serialization.encodeToString
@@ -22,16 +19,7 @@ internal class LoginControllerITest : ControllerTest() {
 
     @Test
     fun `should accept POST request on sign up API`() = testApplication {
-        environment {
-            config = MapApplicationConfig(
-                "ktor.environment" to "test"
-            )
-        }
-        application {
-            configureRouting()
-            configureSerialization()
-        }
-
+        // given
         val request = Json.encodeToString(
             value =
             UserRequest(
@@ -42,10 +30,12 @@ internal class LoginControllerITest : ControllerTest() {
             )
         )
 
+        // when
         client.post("/api/sign-up") {
             contentType(ContentType.Application.Json)
             setBody(request)
         }.apply {
+            // then
             assertEquals(HttpStatusCode.OK, status)
             assertEquals(
                 """
