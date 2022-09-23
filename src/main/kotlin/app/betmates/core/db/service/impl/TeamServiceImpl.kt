@@ -3,8 +3,10 @@ package app.betmates.core.db.service.impl
 import app.betmates.core.db.DatabaseConnection
 import app.betmates.core.db.entity.PlayerEntity
 import app.betmates.core.db.entity.TeamEntity
+import app.betmates.core.db.entity.TeamTable
 import app.betmates.core.db.service.PlayerService
 import app.betmates.core.db.service.TeamService
+import app.betmates.core.db.service.ilike
 import app.betmates.core.domain.FootballTeam
 import app.betmates.core.domain.SnookerTeam
 import app.betmates.core.domain.Status
@@ -71,6 +73,12 @@ class TeamServiceImpl(
 
     override suspend fun findAll(): Flow<Team> = newSuspendedTransaction(db = database) {
         TeamEntity.all().asFlow().map { mapToDomain(it) }
+    }
+
+    override suspend fun findByName(name: String): Flow<Team> = newSuspendedTransaction(db = database) {
+        TeamEntity.find {
+            TeamTable.name ilike "%$name%"
+        }.asFlow().map { mapToDomain(it) }
     }
 
     override suspend fun delete(domain: Team): Unit = newSuspendedTransaction(db = database) {

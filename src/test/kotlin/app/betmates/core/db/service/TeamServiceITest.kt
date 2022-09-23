@@ -204,7 +204,7 @@ internal class TeamServiceITest : RepositoryTest() {
             val user2 = User("Ronaldo Fenômeno", "ronaldo@r9.com")
             val player1 = Player("CR7", user = user1)
             val player2 = Player("R9", user = user2)
-            val team = FootballTeam("Judd Trump").apply {
+            val team = FootballTeam("Real Madrid").apply {
                 addPlayer(player1)
                 addPlayer(player2)
             }
@@ -234,7 +234,7 @@ internal class TeamServiceITest : RepositoryTest() {
             // given
             val user1 = User("Cristiano Ronaldo", "cris@cr7.com")
             val player1 = Player("CR7", user = user1)
-            val team = FootballTeam("Judd Trump").apply {
+            val team = FootballTeam("Real Madrid").apply {
                 addPlayer(player1)
             }
             var savedTeam = teamService.save(team)
@@ -271,7 +271,7 @@ internal class TeamServiceITest : RepositoryTest() {
             val user2 = User("Ronaldo Fenômeno", "ronaldo@r9.com")
             val player1 = playerService.save(Player("CR7", user = user1))
             val player2 = playerService.save(Player("R9", user = user2))
-            val team = FootballTeam("Judd Trump").apply {
+            val team = SnookerTeam("Real Snooker").apply {
                 addPlayer(player1)
                 addPlayer(player2)
             }
@@ -292,6 +292,36 @@ internal class TeamServiceITest : RepositoryTest() {
                     it.nickName == player1.nickName
                 }
             )
+        }
+
+        cleanUp()
+    }
+
+    @Test
+    fun `should find teams by name in the database`() = transaction {
+        setUp()
+
+        runTest {
+            // given
+            val team1 = teamService.save(FootballTeam("Real Madrid"))
+            val team2 = teamService.save(FootballTeam("Real Betis"))
+            val team3 = teamService.save(FootballTeam("Real Sociedad"))
+            val team4 = teamService.save(FootballTeam("Liverpool"))
+
+            // when
+            val teams = teamService.findByName("real")
+
+            // then
+            val list = mutableSetOf<Team>()
+            teams.collect {
+                list.add(it)
+            }
+
+            assertEquals(3, list.size)
+            assertTrue { list.contains(team1) }
+            assertTrue { list.contains(team2) }
+            assertTrue { list.contains(team3) }
+            assertFalse { list.contains(team4) }
         }
 
         cleanUp()
