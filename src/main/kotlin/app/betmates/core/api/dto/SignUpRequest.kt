@@ -4,7 +4,7 @@ import app.betmates.core.domain.User
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserRequest(
+data class SignUpRequest(
     val name: String,
     val email: String,
     val username: String,
@@ -17,7 +17,7 @@ data class UserRequest(
         email = email,
         username = username
     ).apply {
-        id = this@UserRequest.id
+        id = this@SignUpRequest.id
         acceptPassword(password)
     }
 }

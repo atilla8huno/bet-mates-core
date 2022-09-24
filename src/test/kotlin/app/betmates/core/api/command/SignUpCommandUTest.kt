@@ -1,7 +1,7 @@
 package app.betmates.core.api.command
 
-import app.betmates.core.api.command.impl.UserCommandImpl
-import app.betmates.core.api.dto.UserRequest
+import app.betmates.core.api.dto.SignUpRequest
+import app.betmates.core.api.dto.SignUpResponse
 import app.betmates.core.db.service.UserService
 import app.betmates.core.domain.User
 import io.mockk.coEvery
@@ -19,9 +19,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 @ExperimentalCoroutinesApi
-internal class UserCommandUTest {
+internal class SignUpCommandUTest {
 
-    private lateinit var userCommand: UserCommand
+    private lateinit var signUpCommand: Command<SignUpRequest, SignUpResponse>
     private lateinit var userService: UserService
 
     @BeforeTest
@@ -29,13 +29,13 @@ internal class UserCommandUTest {
         Dispatchers.setMain(StandardTestDispatcher(TestScope().testScheduler))
 
         userService = mockk()
-        userCommand = UserCommandImpl(userService)
+        signUpCommand = SignUpCommand(userService)
     }
 
     @Test
     fun `should the sign up command call the service to save an user given a request`() = runTest {
         // given
-        val request = UserRequest(
+        val request = SignUpRequest(
             name = "Ronald O'Sullivan",
             email = "ronnie@osullivan.com",
             username = "ronnie",
@@ -50,7 +50,7 @@ internal class UserCommandUTest {
         }
 
         // when
-        val response = userCommand.signUp(request)
+        val response = signUpCommand.execute(request)
 
         // then
         assertNotNull(response)

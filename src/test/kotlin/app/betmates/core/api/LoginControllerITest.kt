@@ -1,6 +1,6 @@
 package app.betmates.core.api
 
-import app.betmates.core.api.dto.UserRequest
+import app.betmates.core.api.dto.SignUpRequest
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
@@ -22,7 +22,7 @@ internal class LoginControllerITest : ControllerTest() {
         // given
         val request = Json.encodeToString(
             value =
-            UserRequest(
+            SignUpRequest(
                 name = "Hey Joe",
                 email = "heyjoe@gmail.com",
                 username = "heyjoe",
