@@ -68,7 +68,7 @@ class UserServiceImpl(
         password: String
     ): User? = newSuspendedTransaction(db = database) {
         UserEntity.find {
-            (UserTable.username eq username) and (UserTable.password eq User.encrypt(password))
+            (UserTable.username eq username) and (UserTable.password eq password)
         }.firstOrNull()?.let {
             mapToDomain(it)
         }

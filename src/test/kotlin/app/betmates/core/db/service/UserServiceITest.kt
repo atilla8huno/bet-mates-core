@@ -186,7 +186,7 @@ internal class UserServiceITest : RepositoryTest() {
             )
 
             // when
-            val foundUser = userService.findByUsernameAndPassword(username, password)
+            val foundUser = userService.findByUsernameAndPassword(username, encrypt(password))
 
             // then
             assertNotNull(foundUser)

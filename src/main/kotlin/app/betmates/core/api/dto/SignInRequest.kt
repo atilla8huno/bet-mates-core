@@ -4,16 +4,12 @@ import app.betmates.core.domain.User
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SignUpRequest(
-    val name: String,
+data class SignInRequest(
     val email: String,
-    val username: String,
     val password: String
 ) {
     fun mapToDomain() = User(
-        name = name,
-        email = email,
-        username = username
+        email = email
     ).apply {
         acceptPassword(password)
     }
