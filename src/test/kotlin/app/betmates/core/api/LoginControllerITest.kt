@@ -4,8 +4,6 @@ import app.betmates.core.api.dto.SignInRequest
 import app.betmates.core.api.dto.SignInResponse
 import app.betmates.core.api.dto.SignUpRequest
 import app.betmates.core.api.dto.SignUpResponse
-import app.betmates.core.db.entity.UserEntity
-import app.betmates.core.domain.User
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
@@ -16,7 +14,6 @@ import io.ktor.server.testing.testApplication
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -29,6 +26,15 @@ internal class LoginControllerITest : ControllerTest() {
     fun `should accept POST request on sign up API`() = testApplication {
         // given
         val customUsername = "heyjoe"
+
+        /*
+        {
+           "name":"Hey Joe",
+           "email":"heyjoe@gmail.com",
+           "username":"heyjoe",
+           "password":"heyjoe"
+        }
+         */
         val request = Json.encodeToString(
             value = SignUpRequest(
                 name = "Hey Joe",
@@ -68,6 +74,12 @@ internal class LoginControllerITest : ControllerTest() {
 
         insertUser(email, username, password)
 
+        /*
+        {
+           "email":"userX@b.c",
+           "password":"123456"
+        }
+         */
         val request = Json.encodeToString(
             value = SignInRequest(
                 email = email,
@@ -95,19 +107,6 @@ internal class LoginControllerITest : ControllerTest() {
             assertEquals(username, response.username)
             assertFalse { response.token.isBlank() }
             assertTrue { response.expiresAt > System.currentTimeMillis() }
-        }
-    }
-
-    private fun insertUser(
-        customEmail: String,
-        customUsername: String,
-        customPassword: String
-    ) = transaction {
-        UserEntity.new {
-            name = "user X"
-            email = customEmail
-            username = customUsername
-            password = User.encrypt(customPassword)
         }
     }
 }

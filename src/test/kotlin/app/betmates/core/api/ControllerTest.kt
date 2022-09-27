@@ -4,7 +4,9 @@ import app.betmates.core.db.DatabaseConnection
 import app.betmates.core.db.entity.PlayerTable
 import app.betmates.core.db.entity.PlayerTeamTable
 import app.betmates.core.db.entity.TeamTable
+import app.betmates.core.db.entity.UserEntity
 import app.betmates.core.db.entity.UserTable
+import app.betmates.core.domain.User
 import app.betmates.core.ktor.plugins.configureRouting
 import app.betmates.core.ktor.plugins.configureSerialization
 import io.ktor.server.config.MapApplicationConfig
@@ -49,5 +51,18 @@ internal abstract class ControllerTest {
     @AfterTest
     fun cleanUp() = transaction {
         SchemaUtils.drop(UserTable, PlayerTable, TeamTable, PlayerTeamTable)
+    }
+
+    fun insertUser(
+        customEmail: String,
+        customUsername: String,
+        customPassword: String
+    ) = transaction {
+        UserEntity.new {
+            name = "user X"
+            email = customEmail
+            username = customUsername
+            password = User.encrypt(customPassword)
+        }
     }
 }
