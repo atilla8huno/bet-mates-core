@@ -1,7 +1,9 @@
 package app.betmates.core.api
 
 import app.betmates.core.api.dto.SignInRequest
+import app.betmates.core.api.dto.SignInResponse
 import app.betmates.core.api.dto.SignUpRequest
+import app.betmates.core.api.dto.SignUpResponse
 import app.betmates.core.db.entity.UserEntity
 import app.betmates.core.domain.User
 import io.ktor.client.request.post
@@ -17,6 +19,7 @@ import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
@@ -25,11 +28,12 @@ internal class LoginControllerITest : ControllerTest() {
     @Test
     fun `should accept POST request on sign up API`() = testApplication {
         // given
+        val customUsername = "heyjoe"
         val request = Json.encodeToString(
             value = SignUpRequest(
                 name = "Hey Joe",
                 email = "heyjoe@gmail.com",
-                username = "heyjoe",
+                username = customUsername,
                 password = "heyjoe"
             )
         )
@@ -41,15 +45,17 @@ internal class LoginControllerITest : ControllerTest() {
         }.apply {
             // then
             assertEquals(HttpStatusCode.OK, status)
-            assertEquals(
-                """
-                {
-                    "id": 1,
-                    "username": "heyjoe"
-                }
-                """.trimIndent(),
-                bodyAsText()
-            )
+
+            /*
+            {
+                "id": 1,
+                "username": "heyjoe"
+            }
+             */
+            val response = Json.decodeFromString(SignUpResponse.serializer(), bodyAsText())
+
+            assertEquals(1, response.id)
+            assertEquals(customUsername, response.username)
         }
     }
 
@@ -57,8 +63,8 @@ internal class LoginControllerITest : ControllerTest() {
     fun `should authenticate user with email and password and then send a token in the response`() = testApplication {
         // given
         val email = "userX@b.c"
-        val username = "123456"
-        val password = "userX"
+        val username = "userX"
+        val password = "123456"
 
         insertUser(email, username, password)
 
@@ -77,10 +83,11 @@ internal class LoginControllerITest : ControllerTest() {
             // then
             assertEquals(HttpStatusCode.OK, status)
 
-            val response = bodyAsText()
-            assertTrue { response.contains("token") }
-            assertTrue { response.contains("username") }
-            assertTrue { response.contains(username) }
+            val response = Json.decodeFromString(SignInResponse.serializer(), bodyAsText())
+
+            assertEquals(username, response.username)
+            assertFalse { response.token.isBlank() }
+            assertTrue { response.expiresAt > System.currentTimeMillis() }
         }
     }
 
