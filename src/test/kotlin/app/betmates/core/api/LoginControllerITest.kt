@@ -83,6 +83,13 @@ internal class LoginControllerITest : ControllerTest() {
             // then
             assertEquals(HttpStatusCode.OK, status)
 
+            /*
+            {
+               "username":"userX",
+               "token":"xxx",
+               "expiresAt":000
+            }
+             */
             val response = Json.decodeFromString(SignInResponse.serializer(), bodyAsText())
 
             assertEquals(username, response.username)
