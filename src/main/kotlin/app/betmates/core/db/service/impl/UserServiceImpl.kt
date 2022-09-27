@@ -63,12 +63,12 @@ class UserServiceImpl(
         }
     }
 
-    override suspend fun findByUsernameAndPassword(
-        username: String,
+    override suspend fun findByEmailAndPassword(
+        email: String,
         password: String
     ): User? = newSuspendedTransaction(db = database) {
         UserEntity.find {
-            (UserTable.username eq username) and (UserTable.password eq password)
+            (UserTable.email eq email) and (UserTable.password eq password)
         }.firstOrNull()?.let {
             mapToDomain(it)
         }

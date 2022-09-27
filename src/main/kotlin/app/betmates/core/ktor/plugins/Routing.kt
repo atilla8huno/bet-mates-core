@@ -1,5 +1,6 @@
 package app.betmates.core.ktor.plugins
 
+import app.betmates.core.api.signIn
 import app.betmates.core.api.signUp
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -12,6 +13,7 @@ fun Application.configureRouting() {
     routing {
         // public APIs
         signUp()
+        signIn()
 
         get("/") {
             call.respondText("Hello World!")

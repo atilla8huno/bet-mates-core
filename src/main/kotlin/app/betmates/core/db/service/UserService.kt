@@ -5,8 +5,8 @@ import app.betmates.core.domain.User
 
 interface UserService : RepositoryService<User, UserEntity> {
     suspend fun findByEmail(email: String): User?
-    suspend fun findByUsernameAndPassword(
-        username: String,
+    suspend fun findByEmailAndPassword(
+        email: String,
         password: String
     ): User?
     suspend fun updatePassword(

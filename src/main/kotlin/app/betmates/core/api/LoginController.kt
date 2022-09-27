@@ -1,7 +1,10 @@
 package app.betmates.core.api
 
 import app.betmates.core.api.command.Command
+import app.betmates.core.api.command.SignInCommand
 import app.betmates.core.api.command.SignUpCommand
+import app.betmates.core.api.dto.SignInRequest
+import app.betmates.core.api.dto.SignInResponse
 import app.betmates.core.api.dto.SignUpRequest
 import app.betmates.core.api.dto.SignUpResponse
 import io.ktor.server.application.call
@@ -19,6 +22,20 @@ fun Route.signUp() {
             val request = call.receive<SignUpRequest>()
 
             val response = signUpCommand.execute(request)
+
+            call.respond(response)
+        }
+    }
+}
+
+fun Route.signIn() {
+    val signInCommand: Command<SignInRequest, SignInResponse> = SignInCommand()
+
+    route("/api/sign-in") {
+        post {
+            val request = call.receive<SignInRequest>()
+
+            val response = signInCommand.execute(request)
 
             call.respond(response)
         }

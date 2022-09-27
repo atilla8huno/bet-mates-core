@@ -176,17 +176,18 @@ internal class UserServiceITest : RepositoryTest() {
     }
 
     @Test
-    fun `should find an user in the database by username and password`() = transaction {
+    fun `should find an user in the database by email and password`() = transaction {
         runTest {
             // given
             val username = "usercool"
             val password = "123456"
+            val email = "user@a.com"
             val user = userService.save(
-                User("User 1", "user@a.com", username).apply { acceptPassword(password) }
+                User("User 1", email, username).apply { acceptPassword(password) }
             )
 
             // when
-            val foundUser = userService.findByUsernameAndPassword(username, encrypt(password))
+            val foundUser = userService.findByEmailAndPassword(email, encrypt(password))
 
             // then
             assertNotNull(foundUser)

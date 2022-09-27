@@ -13,7 +13,7 @@ class SignInCommand(
 ) : Command<SignInRequest, SignInResponse> {
 
     override suspend fun execute(request: SignInRequest): SignInResponse = coroutineScope {
-        val user = userService.findByUsernameAndPassword(request.email, encrypt(request.password))
+        val user = userService.findByEmailAndPassword(request.email, encrypt(request.password))
         requireNotNull(user) { "Email or password is incorrect." }
 
         val expiresAt = System.currentTimeMillis() + TOKEN_EXPIRATION

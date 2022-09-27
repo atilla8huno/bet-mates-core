@@ -44,7 +44,7 @@ internal class SignInCommandUTest {
         )
 
         coEvery {
-            userService.findByUsernameAndPassword(eq(request.email), eq(encrypt(request.password)))
+            userService.findByEmailAndPassword(eq(request.email), eq(encrypt(request.password)))
         } returns User(email = request.email)
 
         // when
@@ -61,7 +61,7 @@ internal class SignInCommandUTest {
         }
 
         coVerify {
-            userService.findByUsernameAndPassword(eq(request.email), eq(encrypt(request.password)))
+            userService.findByEmailAndPassword(eq(request.email), eq(encrypt(request.password)))
         }
     }
 
@@ -74,7 +74,7 @@ internal class SignInCommandUTest {
         )
 
         coEvery {
-            userService.findByUsernameAndPassword(any(), any())
+            userService.findByEmailAndPassword(any(), any())
         } returns null
 
         // then
@@ -84,7 +84,7 @@ internal class SignInCommandUTest {
         }
 
         coVerify {
-            userService.findByUsernameAndPassword(any(), any())
+            userService.findByEmailAndPassword(any(), any())
         }
     }
 }
