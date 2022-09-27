@@ -4,7 +4,7 @@ import app.betmates.core.util.JwtProperties
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import java.security.MessageDigest
-import java.util.*
+import java.util.Date
 
 class User(
     val name: String = "",
@@ -44,6 +44,15 @@ class User(
         .withClaim("username", username)
         .withExpiresAt(Date(System.currentTimeMillis() + TOKEN_EXPIRATION))
         .sign(Algorithm.HMAC256(JwtProperties.secret))
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is User) return false
+
+        return email == other.email
+    }
+
+    override fun hashCode(): Int = email.hashCode()
 }
 
 fun ByteArray.toHex(): String {

@@ -33,7 +33,6 @@ internal class UserUTest {
     fun `should deactivate user`() {
         // given
         val user = User(
-            name = "John Doe",
             email = "email@mail.com"
         )
 
@@ -50,7 +49,6 @@ internal class UserUTest {
         val password = "I51tS3c4r3?"
         val expectedHash = "2190797d646271ef99ab9077d737ace1aec386586a602da8753a9dcdea2eba2e"
         val user = User(
-            name = "John Doe",
             email = "email@mail.com"
         )
         assertNull(user.encryptedPassword)
@@ -60,5 +58,29 @@ internal class UserUTest {
 
         // then
         assertEquals(expectedHash, user.encryptedPassword!!)
+    }
+
+    @Test
+    fun `should two instances of user with same email be equal`() {
+        // given
+        val user1 = User(
+            email = "email@mail.com"
+        )
+        val user2 = User(
+            email = "email@mail.com"
+        )
+        val user3 = User(
+            email = "another@one.com"
+        )
+
+        // when
+        val user1EqualsToUser2 = user1 == user2
+        val user1EqualsToUser3 = user1 == user3
+        val user2EqualsToUser1 = user2 == user1
+        val user2EqualsToUser3 = user2 == user3
+
+        // then
+        assertTrue { user1EqualsToUser2 && user2EqualsToUser1 }
+        assertFalse { user1EqualsToUser3 && user2EqualsToUser3 }
     }
 }

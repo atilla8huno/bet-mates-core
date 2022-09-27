@@ -7,7 +7,6 @@ import app.betmates.core.db.service.impl.UserServiceImpl
 import app.betmates.core.domain.User.Companion.TOKEN_EXPIRATION
 import app.betmates.core.domain.User.Companion.encrypt
 import kotlinx.coroutines.coroutineScope
-import java.util.*
 
 class SignInCommand(
     private val userService: UserService = UserServiceImpl()
