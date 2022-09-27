@@ -80,7 +80,7 @@ internal class UserUTest {
         val user2EqualsToUser3 = user2 == user3
 
         // then
-        assertTrue { user1EqualsToUser2 && user2EqualsToUser1 }
-        assertFalse { user1EqualsToUser3 && user2EqualsToUser3 }
+        assertTrue { user1EqualsToUser2 and user2EqualsToUser1 }
+        assertFalse { user1EqualsToUser3 or user2EqualsToUser3 }
     }
 }
