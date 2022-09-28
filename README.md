@@ -58,3 +58,10 @@ Now it should be available at http://localhost:8080/
 ### Directly from Intellij IDEA
 
 Run the method `main` from the class [app.betmates.core.Application.kt](https://github.com/bet-mates/bet-mates-core/blob/main/src/main/kotlin/app/betmates/core/Application.kt#L9-L10)
+
+### Git hooks
+
+Please run the following command from the root directory (project)
+```
+git config core.hooksPath hooks
+```
