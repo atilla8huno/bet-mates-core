@@ -15,12 +15,11 @@ fun Application.configureRouting() {
         signUp()
         signIn()
 
-        get("/") {
-            call.respondText("Hello World!")
-        }
-
         // APIs that require authentication
         authenticate(AUTH_JWT) {
+            get("/") {
+                call.respondText("Hello World!")
+            }
         }
     }
 }

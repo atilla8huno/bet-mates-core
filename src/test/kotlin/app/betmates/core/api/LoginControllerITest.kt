@@ -4,10 +4,12 @@ import app.betmates.core.api.dto.SignInRequest
 import app.betmates.core.api.dto.SignInResponse
 import app.betmates.core.api.dto.SignUpRequest
 import app.betmates.core.api.dto.SignUpResponse
+import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.server.testing.testApplication
@@ -74,12 +76,13 @@ internal class LoginControllerITest : ControllerTest() {
 
         insertUser(email, username, password)
 
-        /*
-        {
-           "email":"userX@b.c",
-           "password":"123456"
+        // does not allow access without authentication
+        client.get("/").apply {
+            assertEquals(HttpStatusCode.Unauthorized, status)
+            assertEquals("Authentication token is not valid or has expired", bodyAsText())
         }
-         */
+
+        // { "email":"userX@b.c", "password":"123456" }
         val request = Json.encodeToString(
             value = SignInRequest(
                 email = email,
@@ -88,6 +91,7 @@ internal class LoginControllerITest : ControllerTest() {
         )
 
         // when
+        var token: String?
         client.post("/api/sign-in") {
             contentType(ContentType.Application.Json)
             setBody(request)
@@ -95,18 +99,21 @@ internal class LoginControllerITest : ControllerTest() {
             // then
             assertEquals(HttpStatusCode.OK, status)
 
-            /*
-            {
-               "username":"userX",
-               "token":"xxx",
-               "expiresAt":000
-            }
-             */
+            // { "username":"userX", "token":"xxx", "expiresAt":000 }
             val response = Json.decodeFromString(SignInResponse.serializer(), bodyAsText())
+            token = response.token
 
             assertEquals(username, response.username)
             assertFalse { response.token.isBlank() }
             assertTrue { response.expiresAt > System.currentTimeMillis() }
+        }
+
+        // can access with token in headers
+        client.get("/") {
+            headers.append(HttpHeaders.Authorization, "Bearer $token")
+        }.apply {
+            assertEquals(HttpStatusCode.OK, status)
+            assertEquals("Hello World!", bodyAsText())
         }
     }
 }

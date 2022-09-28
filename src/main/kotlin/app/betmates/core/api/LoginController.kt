@@ -14,9 +14,9 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 
-fun Route.signUp() {
-    val signUpCommand: Command<SignUpRequest, SignUpResponse> = SignUpCommand()
-
+fun Route.signUp(
+    signUpCommand: Command<SignUpRequest, SignUpResponse> = SignUpCommand()
+) {
     route("/api/sign-up") {
         post {
             val request = call.receive<SignUpRequest>()
@@ -28,9 +28,9 @@ fun Route.signUp() {
     }
 }
 
-fun Route.signIn() {
-    val signInCommand: Command<SignInRequest, SignInResponse> = SignInCommand()
-
+fun Route.signIn(
+    signInCommand: Command<SignInRequest, SignInResponse> = SignInCommand()
+) {
     route("/api/sign-in") {
         post {
             val request = call.receive<SignInRequest>()
