@@ -4,7 +4,7 @@ This project contains the core features of the *Bet Mates*. The core features at
 
 ## Technologies
 
-- Java 17
+- JDK 17 (must be installed in local machine)
 - Kotlin
 - Ktor
 
