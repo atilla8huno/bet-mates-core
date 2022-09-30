@@ -65,3 +65,11 @@ Please run the following command from the root directory (project)
 ```
 git config core.hooksPath hooks
 ```
+
+### Local runner:
+
+This project is configured to use a local runner to run the action.
+To set up the local runner, please see issue [#13](https://github.com/bet-mates/bet-mates-web/issues/13).
+
+---
+&copy; bet-mates 2022
