@@ -6,6 +6,7 @@ import app.betmates.core.db.entity.UserTable
 import app.betmates.core.db.service.UserService
 import app.betmates.core.domain.Status
 import app.betmates.core.domain.User
+import com.toxicbakery.bcrypt.Bcrypt
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
@@ -68,8 +69,10 @@ class UserServiceImpl(
         password: String
     ): User? = newSuspendedTransaction(db = database) {
         UserEntity.find {
-            (UserTable.email eq email) and (UserTable.password eq password)
-        }.firstOrNull()?.let {
+            (UserTable.email eq email)
+        }.firstOrNull {
+            Bcrypt.verify(password, it.password!!.toByteArray())
+        }?.let {
             mapToDomain(it)
         }
     }

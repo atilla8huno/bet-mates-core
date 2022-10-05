@@ -4,7 +4,6 @@ import app.betmates.core.api.dto.SignInRequest
 import app.betmates.core.api.dto.SignInResponse
 import app.betmates.core.db.service.UserService
 import app.betmates.core.domain.User
-import app.betmates.core.domain.User.Companion.encrypt
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -44,7 +43,7 @@ internal class SignInCommandUTest {
         )
 
         coEvery {
-            userService.findByEmailAndPassword(eq(request.email), eq(encrypt(request.password)))
+            userService.findByEmailAndPassword(eq(request.email), eq(request.password))
         } returns User(email = request.email)
 
         // when
@@ -61,7 +60,7 @@ internal class SignInCommandUTest {
         }
 
         coVerify {
-            userService.findByEmailAndPassword(eq(request.email), eq(encrypt(request.password)))
+            userService.findByEmailAndPassword(eq(request.email), eq(request.password))
         }
     }
 

@@ -5,7 +5,6 @@ import app.betmates.core.api.dto.SignInResponse
 import app.betmates.core.db.service.UserService
 import app.betmates.core.db.service.impl.UserServiceImpl
 import app.betmates.core.domain.User.Companion.TOKEN_EXPIRATION
-import app.betmates.core.domain.User.Companion.encrypt
 import kotlinx.coroutines.coroutineScope
 
 class SignInCommand(
@@ -13,7 +12,7 @@ class SignInCommand(
 ) : Command<SignInRequest, SignInResponse> {
 
     override suspend fun execute(request: SignInRequest): SignInResponse = coroutineScope {
-        val user = userService.findByEmailAndPassword(request.email, encrypt(request.password))
+        val user = userService.findByEmailAndPassword(request.email, request.password)
         requireNotNull(user) { "Email or password is incorrect." }
 
         val expiresAt = System.currentTimeMillis() + TOKEN_EXPIRATION

@@ -1,5 +1,6 @@
 package app.betmates.core.domain
 
+import com.toxicbakery.bcrypt.Bcrypt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -44,10 +45,9 @@ internal class UserUTest {
     }
 
     @Test
-    fun `should accept password and encrypt it into SHA3-256 hash`() {
+    fun `should accept password and encrypt it with Bcrypt 10 salt rounds hash`() {
         // given
         val password = "I51tS3c4r3?"
-        val expectedHash = "2190797d646271ef99ab9077d737ace1aec386586a602da8753a9dcdea2eba2e"
         val user = User(
             email = "email@mail.com"
         )
@@ -57,7 +57,7 @@ internal class UserUTest {
         user.acceptPassword(password)
 
         // then
-        assertEquals(expectedHash, user.encryptedPassword!!)
+        assertTrue { Bcrypt.verify(password, user.encryptedPassword!!.toByteArray(Charsets.UTF_8)) }
     }
 
     @Test

@@ -4,11 +4,10 @@ import app.betmates.core.db.RepositoryTest
 import app.betmates.core.db.entity.UserEntity
 import app.betmates.core.db.service.impl.UserServiceImpl
 import app.betmates.core.domain.User
-import app.betmates.core.domain.toHex
+import com.toxicbakery.bcrypt.Bcrypt
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.security.MessageDigest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -181,13 +180,13 @@ internal class UserServiceITest : RepositoryTest() {
             // given
             val username = "usercool"
             val password = "123456"
-            val email = "user@a.com"
+            val email = "user123@a.com"
             val user = userService.save(
                 User("User 1", email, username).apply { acceptPassword(password) }
             )
 
             // when
-            val foundUser = userService.findByEmailAndPassword(email, encrypt(password))
+            val foundUser = userService.findByEmailAndPassword(email, password)
 
             // then
             assertNotNull(foundUser)
@@ -210,14 +209,7 @@ internal class UserServiceITest : RepositoryTest() {
             user = userService.updatePassword(user, newPassword)!!
 
             // then
-            assertEquals(encrypt(newPassword), user.encryptedPassword)
+            assertTrue { Bcrypt.verify(newPassword, user.encryptedPassword!!.toByteArray()) }
         }
-    }
-
-    private fun encrypt(password: String): String {
-        val hashBytes: ByteArray = MessageDigest.getInstance("SHA3-256").digest(
-            password.toByteArray(Charsets.UTF_8)
-        )
-        return hashBytes.toHex()
     }
 }
