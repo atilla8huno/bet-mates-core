@@ -22,7 +22,7 @@ group = "app.betmates"
 version = "0.0.1-SNAPSHOT"
 
 application {
-    mainClass.set("io.ktor.server.cio.EngineMain")
+    mainClass.set("app.betmates.core.ApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
@@ -78,6 +78,9 @@ tasks {
         dependsOn.addAll(listOf("compileJava", "compileKotlin", "processResources"))
         archiveClassifier.set("standalone")
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        excludes.add("META-INF/*.RSA")
+        excludes.add("META-INF/*.SF")
+        excludes.add("META-INF/*.DSA")
         manifest { attributes(mapOf("Main-Class" to application.mainClass)) }
         val sourcesMain = sourceSets.main.get()
         val contents = configurations.runtimeClasspath.get()
