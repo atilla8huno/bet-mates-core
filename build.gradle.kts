@@ -8,6 +8,7 @@ val exposed_version: String by project
 val junit_version: String by project
 val h2_version: String by project
 val postgresql_version: String by project
+val bcrypt_version: String by project
 
 plugins {
     application
@@ -59,6 +60,7 @@ dependencies {
     implementation("io.micrometer:micrometer-registry-prometheus:$prometeus_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("org.postgresql:postgresql:$postgresql_version")
+    implementation("com.ToxicBakery.library.bcrypt:bcrypt:$bcrypt_version")
 
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junit_version")
