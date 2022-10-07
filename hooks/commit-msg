@@ -2,8 +2,9 @@
 
 REGEX_ISSUE_ID="^(#[0-9]+|Merge|hotfix)"
 ISSUE_ID_IN_COMMIT=$(echo $(cat "$1") | grep -o -E "$REGEX_ISSUE_ID")
+BRANCH=$(git symbolic-ref --short HEAD)
 
-if [[ -z "$ISSUE_ID_IN_COMMIT" ]]; then
+if [[ -z "$ISSUE_ID_IN_COMMIT" ]] && [[ "$BRANCH" == "main" ]]; then
     echo "[commit-msg] Your commit message is illegal."
     echo "[commit-msg] Amend your commit to include the issue number. Ex.: '#19'."
     exit 1
