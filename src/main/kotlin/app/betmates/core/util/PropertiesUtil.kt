@@ -12,7 +12,7 @@ sealed class PropertiesUtil {
 
 object DatabaseProperties : PropertiesUtil() {
     val username = getProperty("ktor.db.username")
-    val password = getProperty("ktor.db.password")
+    val password = getProperty("ktor.db.password") ?: ""
     val host = getProperty("ktor.db.host")
     val port = getProperty("ktor.db.port")
     val database = getProperty("ktor.db.database")

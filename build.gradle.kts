@@ -9,6 +9,8 @@ val junit_version: String by project
 val h2_version: String by project
 val postgresql_version: String by project
 val bcrypt_version: String by project
+val flyway_version: String by project
+val hikari_version: String by project
 
 plugins {
     application
@@ -61,6 +63,8 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("org.postgresql:postgresql:$postgresql_version")
     implementation("com.ToxicBakery.library.bcrypt:bcrypt:$bcrypt_version")
+    implementation("org.flywaydb:flyway-core:$flyway_version")
+    implementation("com.zaxxer:HikariCP:$hikari_version")
 
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junit_version")
