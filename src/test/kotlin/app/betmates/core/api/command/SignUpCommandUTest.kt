@@ -4,6 +4,7 @@ import app.betmates.core.api.dto.SignUpRequest
 import app.betmates.core.api.dto.SignUpResponse
 import app.betmates.core.db.service.UserService
 import app.betmates.core.domain.User
+import io.mockk.Called
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -13,6 +14,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -49,6 +51,10 @@ internal class SignUpCommandUTest {
             id = 1L
         }
 
+        coEvery {
+            userService.existsByEmailOrUsername(any(), any())
+        } returns false
+
         // when
         val response = signUpCommand.execute(request)
 
@@ -59,6 +65,35 @@ internal class SignUpCommandUTest {
 
         coVerify {
             userService.save(any())
+        }
+    }
+
+    @Test
+    fun `should not save user if already exists`() = runTest {
+        // given
+        val request = SignUpRequest(
+            name = "Ronald O'Sullivan",
+            email = "ronnie@osullivan.com",
+            username = "ronnie",
+            password = "abc123"
+        )
+
+        coEvery {
+            userService.existsByEmailOrUsername(eq(request.email), eq(request.username))
+        } returns true
+
+        // then
+        assertThrows<IllegalArgumentException>("E-mail/Username already exists.") {
+            // when
+            signUpCommand.execute(request)
+        }
+
+        coVerify {
+            userService.existsByEmailOrUsername(eq(request.email), eq(request.username))
+        }
+
+        coVerify {
+            userService.save(any()) wasNot Called
         }
     }
 }

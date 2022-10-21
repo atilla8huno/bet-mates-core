@@ -212,4 +212,31 @@ internal class UserServiceITest : RepositoryTest() {
             assertTrue { Bcrypt.verify(newPassword, user.encryptedPassword!!.toByteArray()) }
         }
     }
+
+    @Test
+    fun `should find an user in the database by email or username`() = transaction {
+        runTest {
+            // given
+            val username = "canbefound"
+            val password = "123456"
+            val email = "canbefound@a.com"
+            userService.save(
+                User("Can Be Found", email, username).apply { acceptPassword(password) }
+            )
+
+            // then
+            assertTrue {
+                // when
+                userService.existsByEmailOrUsername("wrongEmail", username.uppercase())
+            }
+            assertTrue {
+                // when
+                userService.existsByEmailOrUsername(email.uppercase(), "wrongUsername")
+            }
+            assertFalse {
+                // when
+                userService.existsByEmailOrUsername("wrongEmail", "wrongUsername")
+            }
+        }
+    }
 }

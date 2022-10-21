@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.lowerCase
+import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class UserServiceImpl(
@@ -75,6 +77,15 @@ class UserServiceImpl(
         }?.let {
             mapToDomain(it)
         }
+    }
+
+    override suspend fun existsByEmailOrUsername(
+        email: String,
+        username: String
+    ): Boolean = newSuspendedTransaction(db = database) {
+        UserEntity.find {
+            (UserTable.email.lowerCase() eq email.lowercase()) or (UserTable.username.lowerCase() eq username.lowercase())
+        }.count() > 0
     }
 
     override suspend fun updatePassword(

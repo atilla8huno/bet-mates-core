@@ -7,6 +7,7 @@ import app.betmates.core.api.dto.SignInRequest
 import app.betmates.core.api.dto.SignInResponse
 import app.betmates.core.api.dto.SignUpRequest
 import app.betmates.core.api.dto.SignUpResponse
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
@@ -21,9 +22,18 @@ fun Route.signUp(
         post {
             val request = call.receive<SignUpRequest>()
 
-            val response = signUpCommand.execute(request)
+            try {
+                val response = signUpCommand.execute(request)
+                call.respond(HttpStatusCode.Created, response)
+            } catch (error: IllegalArgumentException) {
+                val status = if (error.message?.contains("already exists") == true) {
+                    HttpStatusCode.Conflict
+                } else {
+                    HttpStatusCode.BadRequest
+                }
 
-            call.respond(response)
+                call.respond(status, error.message ?: "")
+            }
         }
     }
 }
@@ -35,9 +45,12 @@ fun Route.signIn(
         post {
             val request = call.receive<SignInRequest>()
 
-            val response = signInCommand.execute(request)
-
-            call.respond(response)
+            try {
+                val response = signInCommand.execute(request)
+                call.respond(response)
+            } catch (error: IllegalArgumentException) {
+                call.respond(HttpStatusCode.Unauthorized, error.message ?: "")
+            }
         }
     }
 }

@@ -55,8 +55,8 @@ internal class SignInCommandUTest {
         assertFalse { response.token.isBlank() }
         assertTrue {
             // now + eight hours (ish)
-            response.expiresAt > System.currentTimeMillis() + 28799000L &&
-                response.expiresAt < System.currentTimeMillis() + 28801000L
+            response.expiresAt > System.currentTimeMillis() + 59000L &&
+                response.expiresAt < System.currentTimeMillis() + 61000L
         }
 
         coVerify {

@@ -13,4 +13,8 @@ interface UserService : RepositoryService<User, UserEntity> {
         user: User,
         newPassword: String
     ): User?
+    suspend fun existsByEmailOrUsername(
+        email: String,
+        username: String
+    ): Boolean
 }

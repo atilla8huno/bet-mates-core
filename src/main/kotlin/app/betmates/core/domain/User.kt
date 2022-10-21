@@ -12,8 +12,8 @@ class User(
     val username: String = email.split("@")[0]
 ) : Base() {
     companion object {
-        const val TOKEN_EXPIRATION = 28800000L
-        const val SALT_ROUNDS = 10
+        const val TOKEN_EXPIRATION = 60000L
+        const val SALT_ROUNDS = 5
     }
 
     var status: Status = Status.ACTIVE

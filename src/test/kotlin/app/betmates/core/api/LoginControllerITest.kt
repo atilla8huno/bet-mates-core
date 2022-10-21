@@ -52,7 +52,7 @@ internal class LoginControllerITest : ControllerTest() {
             setBody(request)
         }.apply {
             // then
-            assertEquals(HttpStatusCode.OK, status)
+            assertEquals(HttpStatusCode.Created, status)
 
             /*
             {
@@ -114,6 +114,76 @@ internal class LoginControllerITest : ControllerTest() {
         }.apply {
             assertEquals(HttpStatusCode.OK, status)
             assertEquals("Hello World!", bodyAsText())
+        }
+    }
+
+    @Test
+    fun `should return error 401 Unauthorized when trying to log in with wrong credentials`() = testApplication {
+        // given
+        val email = "userY@aaa.bbb"
+        val username = "userXXX"
+        val password = "123456"
+
+        insertUser(email, username, password)
+
+        // does not allow access without authentication
+        client.get("/").apply {
+            assertEquals(HttpStatusCode.Unauthorized, status)
+            assertEquals("Authentication token is not valid or has expired", bodyAsText())
+        }
+
+        // { "email":"userY@aaa.bbb", "password":"WrongStuff" }
+        val request = Json.encodeToString(
+            value = SignInRequest(
+                email = email,
+                password = "WrongStuff"
+            )
+        )
+
+        // when
+        client.post("/api/sign-in") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }.apply {
+            // then
+            assertEquals(HttpStatusCode.Unauthorized, status)
+            assertEquals("Email or password is incorrect.", bodyAsText())
+        }
+
+        // does not allow access without authentication
+        client.get("/").apply {
+            assertEquals(HttpStatusCode.Unauthorized, status)
+            assertEquals("Authentication token is not valid or has expired", bodyAsText())
+        }
+    }
+
+    @Test
+    fun `should return error 409 Conflict when trying to sign up an user that already exists`() = testApplication {
+        // given
+        val request = Json.encodeToString(
+            value = SignUpRequest(
+                name = "Hey Joe",
+                email = "joeee@gmail.com",
+                username = "joeee",
+                password = "heyjoe"
+            )
+        )
+
+        client.post("/api/sign-up") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }.apply {
+            assertEquals(HttpStatusCode.Created, status)
+        }
+
+        // when
+        client.post("/api/sign-up") {
+            contentType(ContentType.Application.Json)
+            // same request
+            setBody(request)
+        }.apply {
+            assertEquals(HttpStatusCode.Conflict, status)
+            assertEquals("E-mail/Username already exists.", bodyAsText())
         }
     }
 }

@@ -11,6 +11,9 @@ class SignUpCommand(
 ) : Command<SignUpRequest, SignUpResponse> {
 
     override suspend fun execute(request: SignUpRequest): SignUpResponse = coroutineScope {
+        val userAlreadyExists = userService.existsByEmailOrUsername(request.email, request.username)
+        require(!userAlreadyExists) { "E-mail/Username already exists." }
+
         val newUser = userService.save(request.mapToDomain())
 
         SignUpResponse(newUser.id!!, newUser.username)
