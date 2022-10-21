@@ -54,7 +54,6 @@ internal class SignInCommandUTest {
         assertNotNull(response.username)
         assertFalse { response.token.isBlank() }
         assertTrue {
-            // now + eight hours (ish)
             response.expiresAt > System.currentTimeMillis() + 59000L &&
                 response.expiresAt < System.currentTimeMillis() + 61000L
         }
