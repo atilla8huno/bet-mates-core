@@ -8,20 +8,7 @@ on:
   pull_request:
     branches: [ "main" ]
 
-permissions:
-  actions: write
-  checks: read
-  contents: read
-  deployments: write
-  id-token: write
-  issues: read
-  discussions: read
-  packages: write
-  pages: read
-  pull-requests: read
-  repository-projects: read
-  security-events: write
-  statuses: write
+permissions: write-all
 
 env:
   IMAGE_NAME: bet-mates-core
@@ -29,7 +16,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-#    runs-on: self-hosted
 
     steps:
     - uses: actions/checkout@v3
@@ -86,3 +72,41 @@ jobs:
           docker tag $IMAGE_NAME $IMAGE_ID:latest
           docker push $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:latest
+
+  acceptance:
+    name: Acceptance Tests
+    needs: docker
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    services:
+      backend:
+        image: ghcr.io/${{ github.repository_owner }}/bet-mates-core:latest
+        ports:
+          - 8080:8080
+      frontend:
+        image: ghcr.io/${{ github.repository_owner }}/bet-mates-web:latest
+        ports:
+          - 8000:80
+
+    steps:
+      - name: Checkout web
+        uses: actions/checkout@v3
+        with:
+          repository: 'bet-mates/bet-mates-web'
+          ref: 'main'
+          token: ${{ secrets.PAT }}
+
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7
+          run_install: true
+
+      - name: Run Acceptance Tests
+        run: CYPRESS_BASE_URL=http://localhost:8000 pnpm cypress run
