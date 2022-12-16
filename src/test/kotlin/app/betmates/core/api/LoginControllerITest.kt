@@ -147,7 +147,7 @@ internal class LoginControllerITest : ControllerTest() {
         }.apply {
             // then
             assertEquals(HttpStatusCode.Unauthorized, status)
-            assertEquals("Email or password is incorrect.", bodyAsText())
+            assertEquals("Email or password is incorrect", bodyAsText())
         }
 
         // does not allow access without authentication
@@ -183,7 +183,7 @@ internal class LoginControllerITest : ControllerTest() {
             setBody(request)
         }.apply {
             assertEquals(HttpStatusCode.Conflict, status)
-            assertEquals("E-mail/Username already exists.", bodyAsText())
+            assertEquals("E-mail/Username already exists", bodyAsText())
         }
     }
 }

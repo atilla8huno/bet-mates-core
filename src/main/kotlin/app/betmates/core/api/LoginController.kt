@@ -22,18 +22,8 @@ fun Route.signUp(
         post {
             val request = call.receive<SignUpRequest>()
 
-            try {
-                val response = signUpCommand.execute(request)
-                call.respond(HttpStatusCode.Created, response)
-            } catch (error: IllegalArgumentException) {
-                val status = if (error.message?.contains("already exists") == true) {
-                    HttpStatusCode.Conflict
-                } else {
-                    HttpStatusCode.BadRequest
-                }
-
-                call.respond(status, error.message ?: "")
-            }
+            val response = signUpCommand.execute(request)
+            call.respond(HttpStatusCode.Created, response)
         }
     }
 }
@@ -45,12 +35,8 @@ fun Route.signIn(
         post {
             val request = call.receive<SignInRequest>()
 
-            try {
-                val response = signInCommand.execute(request)
-                call.respond(response)
-            } catch (error: IllegalArgumentException) {
-                call.respond(HttpStatusCode.Unauthorized, error.message ?: "")
-            }
+            val response = signInCommand.execute(request)
+            call.respond(HttpStatusCode.OK, response)
         }
     }
 }

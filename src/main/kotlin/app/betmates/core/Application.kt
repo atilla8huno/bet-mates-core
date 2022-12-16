@@ -2,6 +2,7 @@ package app.betmates.core
 
 import app.betmates.core.db.initDatabase
 import app.betmates.core.ktor.plugins.configureAuthentication
+import app.betmates.core.ktor.plugins.configureErrorHandling
 import app.betmates.core.ktor.plugins.configureHTTP
 import app.betmates.core.ktor.plugins.configureMonitoring
 import app.betmates.core.ktor.plugins.configureRouting
@@ -17,7 +18,8 @@ fun main(args: Array<String>) {
 fun Application.module() {
     configureMonitoring()
     configureHTTP()
+    configureAuthentication()
     configureRouting()
     configureSerialization()
-    configureAuthentication()
+    configureErrorHandling()
 }

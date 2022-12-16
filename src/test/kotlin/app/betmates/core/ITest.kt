@@ -5,6 +5,8 @@ import app.betmates.core.db.entity.PlayerTable
 import app.betmates.core.db.entity.PlayerTeamTable
 import app.betmates.core.db.entity.TeamTable
 import app.betmates.core.db.entity.UserTable
+import app.betmates.core.ktor.plugins.configureAuthentication
+import app.betmates.core.ktor.plugins.configureErrorHandling
 import app.betmates.core.ktor.plugins.configureRouting
 import app.betmates.core.ktor.plugins.configureSerialization
 import io.ktor.server.config.MapApplicationConfig
@@ -32,8 +34,10 @@ internal abstract class ITest {
             )
         }
         application {
+            configureAuthentication()
             configureRouting()
             configureSerialization()
+            configureErrorHandling()
         }
     }
 

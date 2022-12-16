@@ -4,6 +4,7 @@ import app.betmates.core.api.dto.SignUpRequest
 import app.betmates.core.api.dto.SignUpResponse
 import app.betmates.core.db.service.UserService
 import app.betmates.core.domain.User
+import app.betmates.core.exception.ConflictException
 import io.mockk.Called
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -83,7 +84,7 @@ internal class SignUpCommandUTest {
         } returns true
 
         // then
-        assertThrows<IllegalArgumentException>("E-mail/Username already exists.") {
+        assertThrows<ConflictException>("E-mail/Username already exists.") {
             // when
             signUpCommand.execute(request)
         }

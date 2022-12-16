@@ -4,6 +4,7 @@ import app.betmates.core.api.dto.SignInRequest
 import app.betmates.core.api.dto.SignInResponse
 import app.betmates.core.db.service.UserService
 import app.betmates.core.domain.User
+import app.betmates.core.exception.AuthenticationFailed
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -76,7 +77,7 @@ internal class SignInCommandUTest {
         } returns null
 
         // then
-        assertThrows<IllegalArgumentException>("Email or password is incorrect.") {
+        assertThrows<AuthenticationFailed>("Email or password is incorrect.") {
             // when
             signInCommand.execute(request)
         }
