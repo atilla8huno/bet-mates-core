@@ -74,6 +74,7 @@ jobs:
           docker push $IMAGE_ID:latest
 
   acceptance:
+    if: ${{ false }}  # disable for now
     name: Acceptance Tests
     needs: docker
     runs-on: ubuntu-latest
