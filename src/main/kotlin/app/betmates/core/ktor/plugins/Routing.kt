@@ -2,6 +2,7 @@ package app.betmates.core.ktor.plugins
 
 import app.betmates.core.api.signIn
 import app.betmates.core.api.signUp
+import app.betmates.core.createPlayer
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
@@ -20,6 +21,8 @@ fun Application.configureRouting() {
             get("/") {
                 call.respondText("Hello World!")
             }
+
+            createPlayer()
         }
     }
 }

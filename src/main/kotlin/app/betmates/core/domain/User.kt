@@ -7,10 +7,11 @@ import com.toxicbakery.bcrypt.Bcrypt
 import java.util.Date
 
 class User(
+    override var id: Long? = null,
     val name: String = "",
-    val email: String,
+    val email: String = "",
     val username: String = email.split("@")[0]
-) : Base() {
+) : Base(id) {
     companion object {
         const val TOKEN_EXPIRATION = 60000L
         const val SALT_ROUNDS = 5

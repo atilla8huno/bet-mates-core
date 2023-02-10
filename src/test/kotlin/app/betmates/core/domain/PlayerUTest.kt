@@ -11,11 +11,11 @@ internal class PlayerUTest {
     @Test
     fun `should create Player instance`() {
         // given
-        val user = User("User", "user@gmail.com").apply { id = 1L }
+        val user = User(id = 1L, name = "User", email = "user@gmail.com")
         val nickName = "London FC"
 
         // when
-        val player = Player(nickName, user = user)
+        val player = Player(nickName = nickName, user = user)
 
         // then
         assertNotNull(player)
@@ -27,9 +27,9 @@ internal class PlayerUTest {
     @Test
     fun `should make player member of a team`() {
         // given
-        val user = User("User", "user@gmail.com").apply { id = 1L }
-        val player = Player("Ronnie O'Sullivan", user = user)
-        val team = SnookerTeam("The Rocket")
+        val user = User(id = 1L, name = "User", email = "user@gmail.com")
+        val player = Player(nickName = "Ronnie O'Sullivan", user = user)
+        val team = SnookerTeam(name = "The Rocket")
 
         assertTrue {
             // when
@@ -44,9 +44,9 @@ internal class PlayerUTest {
     @Test
     fun `should remove player from team`() {
         // given
-        val user = User("User", "user@gmail.com").apply { id = 1L }
-        val player = Player("C. Ronaldo", user = user)
-        val team = FootballTeam("Real Madrid FC")
+        val user = User(id = 1L, name = "User", email = "user@gmail.com")
+        val player = Player(nickName = "C. Ronaldo", user = user)
+        val team = FootballTeam(name = "Real Madrid FC")
         player.addToTeam(team)
         assertTrue { player.memberOf().contains(team) }
 

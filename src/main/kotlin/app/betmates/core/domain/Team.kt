@@ -1,10 +1,11 @@
 package app.betmates.core.domain
 
 sealed class Team(
+    override var id: Long? = null,
     val type: TeamType,
     open var name: String,
     private val players: MutableSet<Player> = mutableSetOf()
-) : Base() {
+) : Base(id) {
     var status: Status = Status.ACTIVE
         private set
 

@@ -57,7 +57,7 @@ internal class UserServiceITest : RepositoryTest() {
     override fun `should map entity to domain`() = transaction {
         runTest {
             // given
-            val user = userService.save(User("Zinedine Zidane", "zizou@rm.es"))
+            val user = userService.save(User(name = "Zinedine Zidane", email = "zizou@rm.es"))
             val entity = UserEntity.findById(user.id!!)
 
             // when
@@ -76,10 +76,10 @@ internal class UserServiceITest : RepositoryTest() {
     override fun `should find all records in the database`() = transaction {
         runTest {
             // given
-            val user1 = userService.save(User("User 1", "user1@1.com"))
-            val user2 = userService.save(User("User 2", "user2@2.com"))
-            val user3 = userService.save(User("User 3", "user3@3.com"))
-            val user4 = userService.save(User("User 4", "user4@4.com"))
+            val user1 = userService.save(User(name = "User 1", email = "user1@1.com"))
+            val user2 = userService.save(User(name = "User 2", email = "user2@2.com"))
+            val user3 = userService.save(User(name = "User 3", email = "user3@3.com"))
+            val user4 = userService.save(User(name = "User 4", email = "user4@4.com"))
 
             // when
             val allUsers = userService.findAll()
@@ -101,10 +101,10 @@ internal class UserServiceITest : RepositoryTest() {
     override fun `should update the domain in the database`() = transaction {
         runTest {
             // given
-            val user = userService.save(User("User 1", "user@1.com"))
+            val user = userService.save(User(name = "User 1", email = "user@1.com"))
             assertTrue { user.isActive() }
 
-            var updatedUser = User("New Name", "new@email.com")
+            var updatedUser = User(name = "New Name", email = "new@email.com")
                 .apply {
                     id = user.id
                 }.also {
@@ -130,7 +130,7 @@ internal class UserServiceITest : RepositoryTest() {
     override fun `should delete the domain in the database`() = transaction {
         runTest {
             // given
-            val user = userService.save(User("User 1", "user@1.com"))
+            val user = userService.save(User(name = "User 1", email = "user@1.com"))
             assertNotNull(userService.findById(user.id!!))
 
             // when
@@ -147,7 +147,7 @@ internal class UserServiceITest : RepositoryTest() {
     override fun `should find a record in the database by id`() = transaction {
         runTest {
             // given
-            val user = userService.save(User("User 1", "user@1.com"))
+            val user = userService.save(User(name = "User 1", email = "user@1.com"))
 
             // when
             val foundUser = userService.findById(user.id!!)
@@ -163,7 +163,7 @@ internal class UserServiceITest : RepositoryTest() {
         runTest {
             // given
             val email = "user@1.com"
-            val user = userService.save(User("User 1", email))
+            val user = userService.save(User(name = "User 1", email = email))
 
             // when
             val foundUser = userService.findByEmail(email)
@@ -182,7 +182,7 @@ internal class UserServiceITest : RepositoryTest() {
             val password = "123456"
             val email = "user123@a.com"
             val user = userService.save(
-                User("User 1", email, username).apply { acceptPassword(password) }
+                User(name = "User 1", email = email, username = username).apply { acceptPassword(password) }
             )
 
             // when
@@ -198,7 +198,7 @@ internal class UserServiceITest : RepositoryTest() {
     fun `should update the password of an user in the database`() = transaction {
         runTest {
             // given
-            var user = User("User 1", "user@1.com")
+            var user = User(name = "User 1", email = "user@1.com")
             val oldPassword = "123abc"
             user.acceptPassword(oldPassword)
 
@@ -221,7 +221,7 @@ internal class UserServiceITest : RepositoryTest() {
             val password = "123456"
             val email = "canbefound@a.com"
             userService.save(
-                User("Can Be Found", email, username).apply { acceptPassword(password) }
+                User(name = "Can Be Found", email = email, username = username).apply { acceptPassword(password) }
             )
 
             // then

@@ -14,7 +14,7 @@ internal class TeamUTest {
         val name = "London FC"
 
         // when
-        val team: Team = FootballTeam(name)
+        val team: Team = FootballTeam(name = name)
 
         // then
         assertNotNull(team)
@@ -26,7 +26,7 @@ internal class TeamUTest {
     @Test
     fun `should deactivate a team`() {
         // given
-        val team: Team = SnookerTeam("The Rocket")
+        val team: Team = SnookerTeam(name = "The Rocket")
         assertEquals(Status.ACTIVE, team.status)
 
         // when
@@ -39,9 +39,9 @@ internal class TeamUTest {
     @Test
     fun `should make player member of the team`() {
         // given
-        val user = User("User", "user@gmail.com").apply { id = 1L }
-        val player = Player("C. Ronaldo", user = user)
-        val team = FootballTeam("Real Madrid FC")
+        val user = User(id = 1L, name = "User", email = "user@gmail.com")
+        val player = Player(nickName = "C. Ronaldo", user = user)
+        val team = FootballTeam(name = "Real Madrid FC")
 
         assertTrue {
             // when
@@ -56,9 +56,9 @@ internal class TeamUTest {
     @Test
     fun `should remove player from the team`() {
         // given
-        val user = User("User", "user@gmail.com").apply { id = 1L }
-        val player = Player("C. Ronaldo", user = user)
-        val team = FootballTeam("Real Madrid FC")
+        val user = User(id = 1L, name = "User", email = "user@gmail.com")
+        val player = Player(nickName = "C. Ronaldo", user = user)
+        val team = FootballTeam(name = "Real Madrid FC")
         team.addPlayer(player)
         assertTrue { team.players().contains(player) }
         assertTrue { player.memberOf().contains(team) }

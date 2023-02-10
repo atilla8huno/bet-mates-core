@@ -2,6 +2,7 @@ package app.betmates.core.db.service.impl
 
 import app.betmates.core.db.DatabaseConnection
 import app.betmates.core.db.entity.PlayerEntity
+import app.betmates.core.db.entity.PlayerTable
 import app.betmates.core.db.entity.UserEntity
 import app.betmates.core.db.service.PlayerService
 import app.betmates.core.db.service.UserService
@@ -10,10 +11,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class PlayerServiceImpl(
-    private val userService: UserService,
+    private val userService: UserService = UserServiceImpl(),
     private val database: Database = DatabaseConnection.database
 ) : PlayerService {
 
@@ -63,5 +66,13 @@ class PlayerServiceImpl(
         ).also { player ->
             player.id = entity.id.value
         }
+    }
+
+    override suspend fun existsByNickName(
+        nickName: String
+    ): Boolean = newSuspendedTransaction(db = database) {
+        PlayerEntity.find {
+            (PlayerTable.nickName.lowerCase() eq nickName.lowercase())
+        }.count() > 0
     }
 }

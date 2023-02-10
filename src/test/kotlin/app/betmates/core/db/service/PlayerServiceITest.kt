@@ -2,6 +2,7 @@ package app.betmates.core.db.service
 
 import app.betmates.core.db.RepositoryTest
 import app.betmates.core.db.entity.PlayerEntity
+import app.betmates.core.db.entity.UserTable.email
 import app.betmates.core.db.service.impl.PlayerServiceImpl
 import app.betmates.core.db.service.impl.UserServiceImpl
 import app.betmates.core.domain.Player
@@ -12,6 +13,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -33,7 +35,7 @@ internal class PlayerServiceITest : RepositoryTest() {
     override fun `should save the domain in the database`() = transaction {
         runTest {
             // given
-            val user = userService.save(User("Cristiano Ronaldo", "cris@cr7.com"))
+            val user = userService.save(User(name = "Cristiano Ronaldo", email = "cris@cr7.com"))
 
             // when
             val player = Player(nickName = "CR7", user = user)
@@ -53,7 +55,7 @@ internal class PlayerServiceITest : RepositoryTest() {
     override fun `should find a record in the database by id`() = transaction {
         runTest {
             // given
-            val user = userService.save(User("Cristiano Ronaldo", "cris@cr7.com"))
+            val user = userService.save(User(name = "Cristiano Ronaldo", email = "cris@cr7.com"))
             val player = playerService.save(Player(nickName = "CR7", user = user))
 
             // when
@@ -69,7 +71,7 @@ internal class PlayerServiceITest : RepositoryTest() {
     override fun `should map entity to domain`() = transaction {
         runTest {
             // given
-            val user = User("Zinedine Zidane", "zizou@rm.es")
+            val user = User(name = "Zinedine Zidane", email = "zizou@rm.es")
             val player = playerService.save(Player(nickName = "Zizou", user = user))
 
             val entity = PlayerEntity.findById(player.id!!)
@@ -90,7 +92,7 @@ internal class PlayerServiceITest : RepositoryTest() {
     override fun `should find all records in the database`() = transaction {
         runTest {
             // given
-            val user = userService.save(User("User 1", "user@1.com"))
+            val user = userService.save(User(name = "User 1", email = "user@1.com"))
             val player1 = playerService.save(Player(nickName = "Player 1", user = user))
             val player2 = playerService.save(Player(nickName = "Player 2", user = user))
             val player3 = playerService.save(Player(nickName = "Player 3", user = user))
@@ -116,7 +118,7 @@ internal class PlayerServiceITest : RepositoryTest() {
     override fun `should delete the domain in the database`() = transaction {
         runTest {
             // given
-            val user = User("User 1", "user@1.com")
+            val user = User(name = "User 1", email = "user@1.com")
             val player = playerService.save(Player(nickName = "CR7", user = user))
             assertNotNull(playerService.findById(player.id!!))
 
@@ -134,8 +136,8 @@ internal class PlayerServiceITest : RepositoryTest() {
     override fun `should update the domain in the database`() = transaction {
         runTest {
             // given
-            val user1 = userService.save(User("User 1", "user1@1.com"))
-            val user2 = userService.save(User("User 2", "user2@2.com"))
+            val user1 = userService.save(User(name = "User 1", email = "user1@1.com"))
+            val user2 = userService.save(User(name = "User 2", email = "user2@2.com"))
             val player = playerService.save(Player(nickName = "CR7", user = user1))
 
             assertEquals(player.user, user1)
@@ -158,6 +160,25 @@ internal class PlayerServiceITest : RepositoryTest() {
             assertNotEquals(player.nickName, foundPlayer.nickName)
             assertNotEquals(player.user, foundPlayer.user)
             assertEquals(foundPlayer.user, user2)
+        }
+    }
+
+    @Test
+    fun `should find a player in the database by nickName`() = transaction {
+        runTest {
+            // given
+            val user = userService.save(User(name = "User 1", email = "user@1.com"))
+            playerService.save(Player(nickName = "Player 1", user = user))
+
+            // then
+            assertTrue {
+                // when
+                playerService.existsByNickName("Player 1")
+            }
+            assertFalse {
+                // when
+                playerService.existsByNickName("Wrong NickName")
+            }
         }
     }
 }

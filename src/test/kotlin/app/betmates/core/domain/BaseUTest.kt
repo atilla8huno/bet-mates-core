@@ -10,7 +10,7 @@ internal class BaseUTest {
     @Test
     fun `instance of domain should accept ID`() {
         // given
-        val domain: Base = FootballTeam("A")
+        val domain: Base = FootballTeam(name = "A")
         assertNull(domain.id)
 
         // when
@@ -23,8 +23,8 @@ internal class BaseUTest {
     @Test
     fun `two instances with the same ID should be equal`() {
         // given
-        val domain1: Base = FootballTeam("Real Madrid").apply { id = 1L }
-        val domain2: Base = FootballTeam("Portugal").apply { id = 1L }
+        val domain1: Base = FootballTeam(id = 1L, name = "Real Madrid")
+        val domain2: Base = FootballTeam(id = 1L, name = "Portugal")
 
         // when
         val isEqual1 = domain1 == domain2

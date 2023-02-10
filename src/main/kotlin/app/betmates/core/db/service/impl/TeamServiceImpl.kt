@@ -87,8 +87,8 @@ class TeamServiceImpl(
 
     override fun mapToDomain(entity: TeamEntity): Team {
         return when (entity.type) {
-            TeamType.FOOTBALL.name -> FootballTeam(entity.name)
-            TeamType.SNOOKER.name -> SnookerTeam(entity.name)
+            TeamType.FOOTBALL.name -> FootballTeam(name = entity.name)
+            TeamType.SNOOKER.name -> SnookerTeam(name = entity.name)
             else -> throw IllegalStateException("TeamType not mapped at ${this::class.simpleName}#mapToDomain")
         }.also { team ->
             team.id = entity.id.value

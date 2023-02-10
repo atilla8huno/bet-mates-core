@@ -1,5 +1,6 @@
-package app.betmates.core.api.command
+package app.betmates.core.api.command.login
 
+import app.betmates.core.api.command.Command
 import app.betmates.core.api.dto.SignUpRequest
 import app.betmates.core.api.dto.SignUpResponse
 import app.betmates.core.db.service.UserService

@@ -43,8 +43,8 @@ internal class TeamServiceITest : RepositoryTest() {
     override fun `should save the domain in the database`() = transaction {
         runTest {
             // given
-            val team1 = FootballTeam("Real Madrid")
-            val team2 = SnookerTeam("Ronnie O'Sullivan")
+            val team1 = FootballTeam(name = "Real Madrid")
+            val team2 = SnookerTeam(name = "Ronnie O'Sullivan")
 
             // when
             val savedFootballTeam = teamService.save(team1)
@@ -73,10 +73,10 @@ internal class TeamServiceITest : RepositoryTest() {
     override fun `should update the domain in the database`() = transaction {
         runTest {
             // given
-            val team = teamService.saveOrUpdate(SnookerTeam("Jimmy White"))
+            val team = teamService.saveOrUpdate(SnookerTeam(name = "Jimmy White"))
             assertTrue { team.isActive() }
 
-            var updatedTeam: Team = FootballTeam("Real Madrid")
+            var updatedTeam: Team = FootballTeam(name = "Real Madrid")
                 .apply {
                     id = team.id
                 }.also {
@@ -102,7 +102,7 @@ internal class TeamServiceITest : RepositoryTest() {
     override fun `should delete the domain in the database`() = transaction {
         runTest {
             // given
-            val team = teamService.save(FootballTeam("Real Madrid"))
+            val team = teamService.save(FootballTeam(name = "Real Madrid"))
             assertNotNull(teamService.findById(team.id!!))
 
             // when
@@ -118,7 +118,7 @@ internal class TeamServiceITest : RepositoryTest() {
     override fun `should find a record in the database by id`() = transaction {
         runTest {
             // given
-            val savedFootballTeam = teamService.save(FootballTeam("Real Madrid"))
+            val savedFootballTeam = teamService.save(FootballTeam(name = "Real Madrid"))
 
             // when
             val foundTeam = teamService.findById(savedFootballTeam.id!!)
@@ -132,10 +132,10 @@ internal class TeamServiceITest : RepositoryTest() {
     override fun `should find all records in the database`() = transaction {
         runTest {
             // given
-            val team1 = teamService.save(FootballTeam("Real Madrid"))
-            val team2 = teamService.save(FootballTeam("Vasco da Gama"))
-            val team3 = teamService.save(FootballTeam("Arsenal"))
-            val team4 = teamService.save(FootballTeam("Liverpool"))
+            val team1 = teamService.save(FootballTeam(name = "Real Madrid"))
+            val team2 = teamService.save(FootballTeam(name = "Vasco da Gama"))
+            val team3 = teamService.save(FootballTeam(name = "Arsenal"))
+            val team4 = teamService.save(FootballTeam(name = "Liverpool"))
 
             // when
             val allTeams = teamService.findAll()
@@ -157,7 +157,7 @@ internal class TeamServiceITest : RepositoryTest() {
     override fun `should map entity to domain`() = transaction {
         runTest {
             // given
-            val team = teamService.save(SnookerTeam("Judd Trump"))
+            val team = teamService.save(SnookerTeam(name = "Judd Trump"))
             val entity = TeamEntity.findById(team.id!!)
 
             // when
@@ -175,11 +175,11 @@ internal class TeamServiceITest : RepositoryTest() {
     fun `should save the team and its players in the database =`() = transaction {
         runTest {
             // given
-            val user1 = User("Cristiano Ronaldo", "cris@cr7.com")
-            val user2 = User("Ronaldo Fenômeno", "ronaldo@r9.com")
-            val player1 = Player("CR7", user = user1)
-            val player2 = Player("R9", user = user2)
-            val team = FootballTeam("Real Madrid").apply {
+            val user1 = User(name = "Cristiano Ronaldo", email = "cris@cr7.com")
+            val user2 = User(name = "Ronaldo Fenômeno", email = "ronaldo@r9.com")
+            val player1 = Player(nickName = "CR7", user = user1)
+            val player2 = Player(nickName = "R9", user = user2)
+            val team = FootballTeam(name = "Real Madrid").apply {
                 addPlayer(player1)
                 addPlayer(player2)
             }
@@ -203,16 +203,16 @@ internal class TeamServiceITest : RepositoryTest() {
     fun `should add players to an existing team in the database`() = transaction {
         runTest {
             // given
-            val user1 = User("Cristiano Ronaldo", "cris@cr7.com")
-            val player1 = Player("CR7", user = user1)
-            val team = FootballTeam("Real Madrid").apply {
+            val user1 = User(name = "Cristiano Ronaldo", email = "cris@cr7.com")
+            val player1 = Player(nickName = "CR7", user = user1)
+            val team = FootballTeam(name = "Real Madrid").apply {
                 addPlayer(player1)
             }
             var savedTeam = teamService.save(team)
 
             // when
-            val user2 = User("Ronaldo Fenômeno", "ronaldo@r9.com")
-            val player2 = Player("R9", user = user2)
+            val user2 = User(name = "Ronaldo Fenômeno", email = "ronaldo@r9.com")
+            val player2 = Player(nickName = "R9", user = user2)
 
             savedTeam.addPlayer(player2)
 
@@ -234,11 +234,11 @@ internal class TeamServiceITest : RepositoryTest() {
     fun `should remove players from the team in the database`() = transaction {
         runTest {
             // given
-            val user1 = User("Cristiano Ronaldo", "cris@cr7.com")
-            val user2 = User("Ronaldo Fenômeno", "ronaldo@r9.com")
-            val player1 = playerService.save(Player("CR7", user = user1))
-            val player2 = playerService.save(Player("R9", user = user2))
-            val team = SnookerTeam("Real Snooker").apply {
+            val user1 = User(name = "Cristiano Ronaldo", email = "cris@cr7.com")
+            val user2 = User(name = "Ronaldo Fenômeno", email = "ronaldo@r9.com")
+            val player1 = playerService.save(Player(nickName = "CR7", user = user1))
+            val player2 = playerService.save(Player(nickName = "R9", user = user2))
+            val team = SnookerTeam(name = "Real Snooker").apply {
                 addPlayer(player1)
                 addPlayer(player2)
             }
@@ -266,11 +266,11 @@ internal class TeamServiceITest : RepositoryTest() {
     fun `should find teams by name in the database`() = transaction {
         runTest {
             // given
-            val team1 = teamService.save(FootballTeam("Real Madrid FC"))
-            val team2 = teamService.save(FootballTeam("FC Betis Real"))
-            val team3 = teamService.save(FootballTeam("FC Real Sociedad"))
-            val team4 = teamService.save(FootballTeam("An Unrealistic Team"))
-            val team5 = teamService.save(FootballTeam("Liverpool"))
+            val team1 = teamService.save(FootballTeam(name = "Real Madrid FC"))
+            val team2 = teamService.save(FootballTeam(name = "FC Betis Real"))
+            val team3 = teamService.save(FootballTeam(name = "FC Real Sociedad"))
+            val team4 = teamService.save(FootballTeam(name = "An Unrealistic Team"))
+            val team5 = teamService.save(FootballTeam(name = "Liverpool"))
 
             // when
             val teams = teamService.findByName("real")

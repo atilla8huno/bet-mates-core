@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 data class SignInRequest(
     val email: String,
     val password: String
-) {
-    fun mapToDomain() = User(
+) : RequestDTO<User> {
+    override fun mapToDomain() = User(
         email = email
     ).apply {
         acceptPassword(password)

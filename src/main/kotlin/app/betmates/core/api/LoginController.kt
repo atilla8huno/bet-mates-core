@@ -1,8 +1,8 @@
 package app.betmates.core.api
 
 import app.betmates.core.api.command.Command
-import app.betmates.core.api.command.SignInCommand
-import app.betmates.core.api.command.SignUpCommand
+import app.betmates.core.api.command.login.SignInCommand
+import app.betmates.core.api.command.login.SignUpCommand
 import app.betmates.core.api.dto.SignInRequest
 import app.betmates.core.api.dto.SignInResponse
 import app.betmates.core.api.dto.SignUpRequest

@@ -1,5 +1,6 @@
-package app.betmates.core.api.command
+package app.betmates.core.api.command.login
 
+import app.betmates.core.api.command.Command
 import app.betmates.core.api.dto.SignUpRequest
 import app.betmates.core.api.dto.SignUpResponse
 import app.betmates.core.db.service.UserService
@@ -47,9 +48,8 @@ internal class SignUpCommandUTest {
 
         coEvery {
             userService.save(any())
-        } returns User(request.name, request.email, request.username).apply {
+        } returns User(1L, request.name, request.email, request.username).apply {
             acceptPassword(request.password)
-            id = 1L
         }
 
         coEvery {

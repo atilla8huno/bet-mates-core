@@ -1,7 +1,7 @@
 package app.betmates.core.domain
 
 sealed class Base(
-    var id: Long? = null
+    open var id: Long? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
