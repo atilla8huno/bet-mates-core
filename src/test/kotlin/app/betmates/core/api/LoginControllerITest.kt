@@ -182,6 +182,7 @@ internal class LoginControllerITest : ControllerTest() {
             // same request
             setBody(request)
         }.apply {
+            // then
             assertEquals(HttpStatusCode.Conflict, status)
             assertEquals("E-mail/Username already exists", bodyAsText())
         }

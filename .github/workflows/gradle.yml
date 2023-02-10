@@ -74,7 +74,7 @@ jobs:
           docker push $IMAGE_ID:latest
 
   acceptance:
-    if: ${{ false }}  # disable for now
+    if: ${{ false }} # disabled due to github (free) token limitations
     name: Acceptance Tests
     needs: docker
     runs-on: ubuntu-latest
