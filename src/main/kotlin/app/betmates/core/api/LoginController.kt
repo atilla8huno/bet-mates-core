@@ -15,7 +15,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 
-fun Route.signUp(
+fun Route.signUpAPI(
     signUpCommand: Command<SignUpRequest, SignUpResponse> = SignUpCommand()
 ) {
     route("/api/sign-up") {
@@ -28,7 +28,7 @@ fun Route.signUp(
     }
 }
 
-fun Route.signIn(
+fun Route.signInAPI(
     signInCommand: Command<SignInRequest, SignInResponse> = SignInCommand()
 ) {
     route("/api/sign-in") {

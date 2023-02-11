@@ -2,7 +2,7 @@ package app.betmates.core.domain
 
 class Player(
     override var id: Long? = null,
-    val nickName: String,
+    var nickName: String,
     private val memberOf: MutableSet<Team> = mutableSetOf(),
     val user: User
 ) : Base(id) {

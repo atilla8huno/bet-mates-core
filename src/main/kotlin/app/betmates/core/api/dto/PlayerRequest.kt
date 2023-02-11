@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PlayerRequest(
-    val id: Long = 0,
+    var id: Long = 0,
     val userId: Long,
     val nickName: String,
     val memberOf: Set<Long> = emptySet()

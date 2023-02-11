@@ -6,7 +6,6 @@ import app.betmates.core.api.dto.PlayerResponse
 import app.betmates.core.db.service.PlayerService
 import app.betmates.core.domain.Player
 import app.betmates.core.domain.User
-import app.betmates.core.exception.ConflictException
 import io.mockk.Called
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -24,9 +23,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 @ExperimentalCoroutinesApi
-internal class CreatePlayerCommandUTest {
+internal class UpdatePlayerCommandUTest {
 
-    private lateinit var savePlayerCommand: Command<PlayerRequest, PlayerResponse>
+    private lateinit var updatePlayerCommand: Command<PlayerRequest, PlayerResponse>
     private lateinit var playerService: PlayerService
 
     @BeforeTest
@@ -34,30 +33,34 @@ internal class CreatePlayerCommandUTest {
         Dispatchers.setMain(StandardTestDispatcher(TestScope().testScheduler))
 
         playerService = mockk()
-        savePlayerCommand = CreatePlayerCommand(playerService)
+        updatePlayerCommand = UpdatePlayerCommand(playerService)
     }
 
     @Test
-    fun `should the save player command call the service to save a player from a given request`() = runTest {
+    fun `should the update command call the service to update the properties of player`() = runTest {
         // given
         val request = PlayerRequest(
+            id = 1L,
             userId = 1L,
             nickName = "The Rocket"
         )
 
-        coEvery {
-            playerService.save(any())
-        } returns Player(
+        val expectedPlayer = Player(
             id = 1L,
             nickName = request.nickName,
-            user = User(id = request.userId, email = "ronnie@therocket.com")
+            user = User(id = request.userId)
         )
+
         coEvery {
-            playerService.existsByNickName(eq(request.nickName))
-        } returns false
+            playerService.update(any())
+        } returns expectedPlayer
+
+        coEvery {
+            playerService.findById(eq(request.id))
+        } returns expectedPlayer
 
         // when
-        val response = savePlayerCommand.execute(request)
+        val response = updatePlayerCommand.execute(request)
 
         // then
         assertNotNull(response)
@@ -65,33 +68,37 @@ internal class CreatePlayerCommandUTest {
         assertEquals(request.nickName, response.nickName)
 
         coVerify {
-            playerService.save(any())
+            playerService.findById(eq(request.id))
+        }
+        coVerify {
+            playerService.update(any())
         }
     }
 
     @Test
-    fun `should not save a player if there is one already with the same nickname`() = runTest {
+    fun `should throw exception if player is not found by ID provided`() = runTest {
         // given
         val request = PlayerRequest(
+            id = 1L,
             userId = 1L,
             nickName = "The Rocket"
         )
 
         coEvery {
-            playerService.existsByNickName(eq(request.nickName))
-        } returns true
+            playerService.findById(eq(request.id))
+        } returns null
 
-        // then
-        assertThrows<ConflictException>("NickName already exists") {
+        // when
+        assertThrows<IllegalStateException>("Player not found for ID ${request.id}") {
             // when
-            savePlayerCommand.execute(request)
+            updatePlayerCommand.execute(request)
         }
 
         coVerify {
-            playerService.existsByNickName(eq(request.nickName))
+            playerService.findById(eq(request.id))
         }
         coVerify {
-            playerService.save(any()) wasNot Called
+            playerService.update(any()) wasNot Called
         }
     }
 }

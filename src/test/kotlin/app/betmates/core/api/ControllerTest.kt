@@ -43,13 +43,17 @@ internal abstract class ControllerTest : ITest() {
         }
     }
 
-    suspend fun authenticateUser(client: HttpClient): String {
+    suspend fun authenticateUser(
+        client: HttpClient,
+        email: String = DEFAULT_EMAIL,
+        password: String = DEFAULT_PASSWORD
+    ): String {
         insertUser()
 
         val request = Json.encodeToString(
             value = SignInRequest(
-                email = DEFAULT_EMAIL,
-                password = DEFAULT_PASSWORD
+                email = email,
+                password = password
             )
         )
 
