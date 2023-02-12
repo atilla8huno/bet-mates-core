@@ -144,6 +144,23 @@ internal class UserServiceITest : RepositoryTest() {
     }
 
     @Test
+    override fun `should delete the domain in the database by id`() = transaction {
+        runTest {
+            // given
+            val user = userService.save(User(name = "User 1", email = "user@1.com"))
+            assertNotNull(userService.findById(user.id!!))
+
+            // when
+            userService.deleteById(user.id!!)
+
+            // then
+            val foundUser = userService.findById(user.id!!)
+
+            assertNull(foundUser)
+        }
+    }
+
+    @Test
     override fun `should find a record in the database by id`() = transaction {
         runTest {
             // given

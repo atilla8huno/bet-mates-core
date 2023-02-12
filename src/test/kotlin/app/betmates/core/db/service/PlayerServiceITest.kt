@@ -129,6 +129,28 @@ internal class PlayerServiceITest : RepositoryTest() {
             val foundPlayer = playerService.findById(player.id!!)
 
             assertNull(foundPlayer)
+            // no cascade
+            assertNotNull(userService.findById(player.user.id!!))
+        }
+    }
+
+    @Test
+    override fun `should delete the domain in the database by id`() = transaction {
+        runTest {
+            // given
+            val user = User(name = "User 1", email = "user@1.com")
+            val player = playerService.save(Player(nickName = "CR7", user = user))
+            assertNotNull(playerService.findById(player.id!!))
+
+            // when
+            playerService.deleteById(player.id!!)
+
+            // then
+            val foundPlayer = playerService.findById(player.id!!)
+
+            assertNull(foundPlayer)
+            // no cascade
+            assertNotNull(userService.findById(player.user.id!!))
         }
     }
 

@@ -16,6 +16,7 @@ sealed interface RepositoryService<D : Base, E : LongEntity> {
     suspend fun saveOrUpdate(domain: D): D = if (domain.id === null) save(domain) else update(domain)
     suspend fun findById(id: Long): D? = TODO("Not yet implemented")
     suspend fun delete(domain: D): Unit = TODO("Not yet implemented")
+    suspend fun deleteById(id: Long): Unit = TODO("Not yet implemented")
     suspend fun findAll(): Flow<D> = TODO("Not yet implemented")
     fun mapToDomain(entity: E): D = TODO("Not yet implemented")
 }

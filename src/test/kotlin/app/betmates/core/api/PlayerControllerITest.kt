@@ -3,6 +3,7 @@ package app.betmates.core.api
 import app.betmates.core.api.dto.PlayerRequest
 import app.betmates.core.api.dto.PlayerResponse
 import io.ktor.client.HttpClient
+import io.ktor.client.request.delete
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -185,6 +186,38 @@ internal class PlayerControllerITest : ControllerTest() {
             headers.append(HttpHeaders.Authorization, "Bearer $token")
             contentType(ContentType.Application.Json)
             setBody(request)
+        }.apply {
+            // then
+            assertEquals(HttpStatusCode.BadRequest, status)
+            assertEquals("Invalid ID", bodyAsText())
+        }
+    }
+
+    @Test
+    fun `should accept DELETE request on delete player API`() = testApplication {
+        // given
+        val token = authenticateUser(client)
+        savePlayer(client, token)
+
+        // when
+        client.delete("/api/player/1") {
+            headers.append(HttpHeaders.Authorization, "Bearer $token")
+            contentType(ContentType.Application.Json)
+        }.apply {
+            // then
+            assertEquals(HttpStatusCode.OK, status)
+        }
+    }
+
+    @Test
+    fun `should not accept DELETE request on delete player API with ID non-numeric`() = testApplication {
+        // given
+        val token = authenticateUser(client)
+
+        // when ID not a number
+        client.delete("/api/player/thisIsNotANumber") {
+            headers.append(HttpHeaders.Authorization, "Bearer $token")
+            contentType(ContentType.Application.Json)
         }.apply {
             // then
             assertEquals(HttpStatusCode.BadRequest, status)

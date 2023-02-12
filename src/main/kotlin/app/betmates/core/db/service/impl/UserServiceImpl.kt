@@ -45,7 +45,11 @@ class UserServiceImpl(
     }
 
     override suspend fun delete(domain: User): Unit = newSuspendedTransaction(db = database) {
-        UserEntity.findById(domain.id!!)?.delete()
+        deleteById(domain.id!!)
+    }
+
+    override suspend fun deleteById(id: Long): Unit = newSuspendedTransaction(db = database) {
+        UserEntity.findById(id)?.delete()
     }
 
     override suspend fun findById(id: Long): User? = newSuspendedTransaction(db = database) {

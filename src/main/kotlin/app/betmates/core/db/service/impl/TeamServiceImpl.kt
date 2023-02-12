@@ -82,7 +82,11 @@ class TeamServiceImpl(
     }
 
     override suspend fun delete(domain: Team): Unit = newSuspendedTransaction(db = database) {
-        TeamEntity.findById(domain.id!!)?.delete()
+        deleteById(domain.id!!)
+    }
+
+    override suspend fun deleteById(id: Long): Unit = newSuspendedTransaction(db = database) {
+        TeamEntity.findById(id)?.delete()
     }
 
     override fun mapToDomain(entity: TeamEntity): Team {

@@ -56,7 +56,11 @@ class PlayerServiceImpl(
     }
 
     override suspend fun delete(domain: Player): Unit = newSuspendedTransaction(db = database) {
-        PlayerEntity.findById(domain.id!!)?.delete()
+        deleteById(domain.id!!)
+    }
+
+    override suspend fun deleteById(id: Long): Unit = newSuspendedTransaction(db = database) {
+        PlayerEntity.findById(id)?.delete()
     }
 
     override fun mapToDomain(entity: PlayerEntity): Player {

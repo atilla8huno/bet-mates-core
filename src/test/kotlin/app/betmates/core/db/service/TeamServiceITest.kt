@@ -115,6 +115,22 @@ internal class TeamServiceITest : RepositoryTest() {
     }
 
     @Test
+    override fun `should delete the domain in the database by id`() = transaction {
+        runTest {
+            // given
+            val team = teamService.save(FootballTeam(name = "Real Madrid"))
+            assertNotNull(teamService.findById(team.id!!))
+
+            // when
+            teamService.deleteById(team.id!!)
+
+            // then
+            val foundTeam = teamService.findById(team.id!!)
+            assertNull(foundTeam)
+        }
+    }
+
+    @Test
     override fun `should find a record in the database by id`() = transaction {
         runTest {
             // given
