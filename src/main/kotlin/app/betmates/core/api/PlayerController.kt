@@ -3,6 +3,7 @@ package app.betmates.core.api
 import app.betmates.core.api.command.Command
 import app.betmates.core.api.command.player.CreatePlayerCommand
 import app.betmates.core.api.command.player.DeletePlayerCommand
+import app.betmates.core.api.command.player.FindPlayerByIdCommand
 import app.betmates.core.api.command.player.UpdatePlayerCommand
 import app.betmates.core.api.dto.PlayerRequest
 import app.betmates.core.api.dto.PlayerResponse
@@ -12,6 +13,7 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
+import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
@@ -19,7 +21,8 @@ import io.ktor.server.routing.route
 fun Route.playerAPI(
     createPlayerCommand: Command<PlayerRequest, PlayerResponse> = CreatePlayerCommand(),
     updatePlayerCommand: Command<PlayerRequest, PlayerResponse> = UpdatePlayerCommand(),
-    deletePlayerCommand: Command<Long, Unit> = DeletePlayerCommand()
+    deletePlayerCommand: Command<Long, Unit> = DeletePlayerCommand(),
+    findPlayerByIdCommand: Command<Long, PlayerResponse> = FindPlayerByIdCommand()
 ) {
     route("/api/player") {
         post {
@@ -49,6 +52,15 @@ fun Route.playerAPI(
 
             val response = deletePlayerCommand.execute(request)
             call.respond(HttpStatusCode.NoContent, response)
+        }
+
+        get("{id}") {
+            val request = call.parameters["id"]
+                ?.toLongOrNull()
+                ?: return@get call.respond(HttpStatusCode.BadRequest, "Invalid ID")
+
+            val response = findPlayerByIdCommand.execute(request)
+            call.respond(HttpStatusCode.OK, response)
         }
     }
 }

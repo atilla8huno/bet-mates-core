@@ -4,6 +4,7 @@ import app.betmates.core.api.dto.PlayerRequest
 import app.betmates.core.api.dto.PlayerResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.delete
+import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -20,6 +21,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 @ExperimentalCoroutinesApi
 internal class PlayerControllerITest : ControllerTest() {
@@ -263,6 +265,43 @@ internal class PlayerControllerITest : ControllerTest() {
             // then
             assertEquals(HttpStatusCode.NotFound, status)
             assertEquals("Entry not found for ID 1", bodyAsText())
+        }
+    }
+
+    @Test
+    fun `should accept GET request on find player by ID API`() = testApplication {
+        // given
+        val token = authenticateUser(client)
+        savePlayer(client, token)
+
+        // when
+        client.get("/api/player/1") {
+            headers.append(HttpHeaders.Authorization, "Bearer $token")
+            contentType(ContentType.Application.Json)
+        }.apply {
+            // then
+            assertEquals(HttpStatusCode.OK, status)
+
+            val response = Json.decodeFromString(PlayerResponse.serializer(), bodyAsText())
+
+            assertEquals(1, response.id)
+            assertFalse { response.nickName.isBlank() }
+        }
+    }
+
+    @Test
+    fun `should not accept GET request on find player by ID API with ID non-numeric`() = testApplication {
+        // given
+        val token = authenticateUser(client)
+
+        // when ID not a number
+        client.get("/api/player/thisIsNotANumber") {
+            headers.append(HttpHeaders.Authorization, "Bearer $token")
+            contentType(ContentType.Application.Json)
+        }.apply {
+            // then
+            assertEquals(HttpStatusCode.BadRequest, status)
+            assertEquals("Invalid ID", bodyAsText())
         }
     }
 
