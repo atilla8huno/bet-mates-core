@@ -1,6 +1,7 @@
 package app.betmates.core.db.service
 
 import app.betmates.core.db.RepositoryTest
+import app.betmates.core.db.entity.PlayerTable.user
 import app.betmates.core.db.entity.TeamEntity
 import app.betmates.core.db.service.impl.PlayerServiceImpl
 import app.betmates.core.db.service.impl.TeamServiceImpl
@@ -10,8 +11,12 @@ import app.betmates.core.domain.Player
 import app.betmates.core.domain.SnookerTeam
 import app.betmates.core.domain.Team
 import app.betmates.core.domain.User
+import app.betmates.core.exception.NotFoundException
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.toCollection
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.BeforeTest
@@ -23,6 +28,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
+@DelicateCoroutinesApi
 @ExperimentalCoroutinesApi
 internal class TeamServiceITest : RepositoryTest() {
 
@@ -99,6 +105,24 @@ internal class TeamServiceITest : RepositoryTest() {
     }
 
     @Test
+    override fun `should throw exception if entry is not found by id on update`() = transaction {
+        runTest {
+            GlobalScope.launch(exceptionHandler) {
+                // given
+                val team = FootballTeam(id = 1L, name = "Real Madrid")
+
+                // when
+                teamService.update(team)
+            }.join()
+
+            // then
+            assertTrue { exceptions.size == 1 }
+            assertTrue { exceptions[0] is NotFoundException }
+            assertEquals("Entry not found for ID 1", exceptions[0].message)
+        }
+    }
+
+    @Test
     override fun `should delete the domain in the database`() = transaction {
         runTest {
             // given
@@ -127,6 +151,25 @@ internal class TeamServiceITest : RepositoryTest() {
             // then
             val foundTeam = teamService.findById(team.id!!)
             assertNull(foundTeam)
+        }
+    }
+
+    @Test
+    override fun `should throw exception if entry is not found by id on delete`() = transaction {
+        runTest {
+            GlobalScope.launch(exceptionHandler) {
+                // given
+                val id = 1L
+                assertNull(teamService.findById(id))
+
+                // when
+                teamService.deleteById(id)
+            }.join()
+
+            // then
+            assertTrue { exceptions.size == 1 }
+            assertTrue { exceptions[0] is NotFoundException }
+            assertEquals("Entry not found for ID 1", exceptions[0].message)
         }
     }
 

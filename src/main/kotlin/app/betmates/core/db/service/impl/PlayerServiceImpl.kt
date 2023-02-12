@@ -3,10 +3,13 @@ package app.betmates.core.db.service.impl
 import app.betmates.core.db.DatabaseConnection
 import app.betmates.core.db.entity.PlayerEntity
 import app.betmates.core.db.entity.PlayerTable
+import app.betmates.core.db.entity.PlayerTable.nickName
+import app.betmates.core.db.entity.PlayerTable.user
 import app.betmates.core.db.entity.UserEntity
 import app.betmates.core.db.service.PlayerService
 import app.betmates.core.db.service.UserService
 import app.betmates.core.domain.Player
+import app.betmates.core.exception.NotFoundException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
@@ -36,13 +39,13 @@ class PlayerServiceImpl(
     }
 
     override suspend fun update(domain: Player): Player = newSuspendedTransaction(db = database) {
-        PlayerEntity.findById(domain.id!!)!!
-            .apply {
+        PlayerEntity.findById(domain.id!!)
+            ?.apply {
                 nickName = domain.nickName
                 user = UserEntity.findById(domain.user.id!!)!!
-            }.let {
+            }?.let {
                 mapToDomain(it)
-            }
+            } ?: throw NotFoundException("Entry not found for ID ${domain.id}")
     }
 
     override suspend fun findById(id: Long): Player? = newSuspendedTransaction(db = database) {
@@ -61,6 +64,7 @@ class PlayerServiceImpl(
 
     override suspend fun deleteById(id: Long): Unit = newSuspendedTransaction(db = database) {
         PlayerEntity.findById(id)?.delete()
+            ?: throw NotFoundException("Entry not found for ID $id")
     }
 
     override fun mapToDomain(entity: PlayerEntity): Player {

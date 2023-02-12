@@ -4,8 +4,12 @@ import app.betmates.core.db.RepositoryTest
 import app.betmates.core.db.entity.UserEntity
 import app.betmates.core.db.service.impl.UserServiceImpl
 import app.betmates.core.domain.User
+import app.betmates.core.exception.NotFoundException
 import com.toxicbakery.bcrypt.Bcrypt
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.BeforeTest
@@ -17,6 +21,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
+@DelicateCoroutinesApi
 @ExperimentalCoroutinesApi
 internal class UserServiceITest : RepositoryTest() {
 
@@ -127,6 +132,24 @@ internal class UserServiceITest : RepositoryTest() {
     }
 
     @Test
+    override fun `should throw exception if entry is not found by id on update`() = transaction {
+        runTest {
+            GlobalScope.launch(exceptionHandler) {
+                // given
+                val user = User(id = 1L)
+
+                // when
+                userService.update(user)
+            }.join()
+
+            // then
+            assertTrue { exceptions.size == 1 }
+            assertTrue { exceptions[0] is NotFoundException }
+            assertEquals("Entry not found for ID 1", exceptions[0].message)
+        }
+    }
+
+    @Test
     override fun `should delete the domain in the database`() = transaction {
         runTest {
             // given
@@ -157,6 +180,25 @@ internal class UserServiceITest : RepositoryTest() {
             val foundUser = userService.findById(user.id!!)
 
             assertNull(foundUser)
+        }
+    }
+
+    @Test
+    override fun `should throw exception if entry is not found by id on delete`() = transaction {
+        runTest {
+            GlobalScope.launch(exceptionHandler) {
+                // given
+                val id = 1L
+                assertNull(userService.findById(id))
+
+                // when
+                userService.deleteById(id)
+            }.join()
+
+            // then
+            assertTrue { exceptions.size == 1 }
+            assertTrue { exceptions[0] is NotFoundException }
+            assertEquals("Entry not found for ID 1", exceptions[0].message)
         }
     }
 

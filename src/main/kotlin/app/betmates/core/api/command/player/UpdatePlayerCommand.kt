@@ -5,8 +5,8 @@ import app.betmates.core.api.dto.PlayerRequest
 import app.betmates.core.api.dto.PlayerResponse
 import app.betmates.core.db.service.PlayerService
 import app.betmates.core.db.service.impl.PlayerServiceImpl
+import app.betmates.core.exception.NotFoundException
 import kotlinx.coroutines.coroutineScope
-import java.lang.IllegalStateException
 
 class UpdatePlayerCommand(
     private val playerService: PlayerService = PlayerServiceImpl()
@@ -14,7 +14,7 @@ class UpdatePlayerCommand(
 
     override suspend fun execute(request: PlayerRequest): PlayerResponse = coroutineScope {
         val player = playerService.findById(request.id)
-            ?: throw IllegalStateException("Player not found for ID ${request.id}")
+            ?: throw NotFoundException("Entry not found for ID ${request.id}")
 
         player.apply {
             nickName = request.nickName

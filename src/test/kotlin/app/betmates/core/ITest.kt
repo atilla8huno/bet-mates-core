@@ -11,6 +11,8 @@ import app.betmates.core.ktor.plugins.configureRouting
 import app.betmates.core.ktor.plugins.configureSerialization
 import io.ktor.server.config.MapApplicationConfig
 import io.ktor.server.testing.testApplication
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -23,8 +25,15 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 
+@DelicateCoroutinesApi
 @ExperimentalCoroutinesApi
 internal abstract class ITest {
+
+    val exceptions = mutableListOf<Throwable>()
+
+    val exceptionHandler = CoroutineExceptionHandler { _, exception ->
+        exceptions.add(exception)
+    }
 
     @BeforeTest
     fun setUp() = testApplication {
@@ -53,5 +62,6 @@ internal abstract class ITest {
     @AfterTest
     fun cleanUp() = transaction {
         SchemaUtils.drop(UserTable, PlayerTable, TeamTable, PlayerTeamTable)
+        exceptions.clear()
     }
 }

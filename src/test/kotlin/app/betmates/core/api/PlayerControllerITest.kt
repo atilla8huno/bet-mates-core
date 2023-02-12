@@ -169,6 +169,31 @@ internal class PlayerControllerITest : ControllerTest() {
     }
 
     @Test
+    fun `should accept PUT request on update player API but throw 404 when ID is not found`() = testApplication {
+        // given
+        val token = authenticateUser(client)
+
+        val request = Json.encodeToString(
+            value = PlayerRequest(
+                id = 1L,
+                userId = 1L,
+                nickName = "The Rocket"
+            )
+        )
+
+        // when
+        client.put("/api/player/1") {
+            headers.append(HttpHeaders.Authorization, "Bearer $token")
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }.apply {
+            // then
+            assertEquals(HttpStatusCode.NotFound, status)
+            assertEquals("Entry not found for ID 1", bodyAsText())
+        }
+    }
+
+    @Test
     fun `should not accept PUT request on update player API with ID non-numeric`() = testApplication {
         // given
         val token = authenticateUser(client)
@@ -205,7 +230,7 @@ internal class PlayerControllerITest : ControllerTest() {
             contentType(ContentType.Application.Json)
         }.apply {
             // then
-            assertEquals(HttpStatusCode.OK, status)
+            assertEquals(HttpStatusCode.NoContent, status)
         }
     }
 
@@ -222,6 +247,22 @@ internal class PlayerControllerITest : ControllerTest() {
             // then
             assertEquals(HttpStatusCode.BadRequest, status)
             assertEquals("Invalid ID", bodyAsText())
+        }
+    }
+
+    @Test
+    fun `should accept DELETE request on delete player API and throw 404 if ID is not found`() = testApplication {
+        // given
+        val token = authenticateUser(client)
+
+        // when ID not a number
+        client.delete("/api/player/1") {
+            headers.append(HttpHeaders.Authorization, "Bearer $token")
+            contentType(ContentType.Application.Json)
+        }.apply {
+            // then
+            assertEquals(HttpStatusCode.NotFound, status)
+            assertEquals("Entry not found for ID 1", bodyAsText())
         }
     }
 

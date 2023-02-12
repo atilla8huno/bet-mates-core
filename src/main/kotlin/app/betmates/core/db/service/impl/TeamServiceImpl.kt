@@ -12,6 +12,7 @@ import app.betmates.core.domain.SnookerTeam
 import app.betmates.core.domain.Status
 import app.betmates.core.domain.Team
 import app.betmates.core.domain.TeamType
+import app.betmates.core.exception.NotFoundException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
@@ -49,8 +50,8 @@ class TeamServiceImpl(
             if (it.id == null) playerService.save(it) else it
         }
 
-        TeamEntity.findById(domain.id!!)!!
-            .apply {
+        TeamEntity.findById(domain.id!!)
+            ?.apply {
                 name = domain.name
                 type = domain.type.name
                 status = domain.status.name
@@ -60,9 +61,9 @@ class TeamServiceImpl(
                         PlayerEntity[it.id!!]
                     }
                 )
-            }.let {
+            }?.let {
                 mapToDomain(it)
-            }
+            } ?: throw NotFoundException("Entry not found for ID ${domain.id}")
     }
 
     override suspend fun findById(id: Long): Team? = newSuspendedTransaction(db = database) {
@@ -87,6 +88,7 @@ class TeamServiceImpl(
 
     override suspend fun deleteById(id: Long): Unit = newSuspendedTransaction(db = database) {
         TeamEntity.findById(id)?.delete()
+            ?: throw NotFoundException("Entry not found for ID $id")
     }
 
     override fun mapToDomain(entity: TeamEntity): Team {

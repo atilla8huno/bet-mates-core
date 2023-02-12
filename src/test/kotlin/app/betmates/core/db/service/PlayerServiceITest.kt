@@ -2,12 +2,16 @@ package app.betmates.core.db.service
 
 import app.betmates.core.db.RepositoryTest
 import app.betmates.core.db.entity.PlayerEntity
-import app.betmates.core.db.entity.UserTable.email
+import app.betmates.core.db.entity.PlayerTeamTable.player
 import app.betmates.core.db.service.impl.PlayerServiceImpl
 import app.betmates.core.db.service.impl.UserServiceImpl
 import app.betmates.core.domain.Player
 import app.betmates.core.domain.User
+import app.betmates.core.exception.NotFoundException
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.BeforeTest
@@ -19,6 +23,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
+@DelicateCoroutinesApi
 @ExperimentalCoroutinesApi
 internal class PlayerServiceITest : RepositoryTest() {
 
@@ -155,6 +160,25 @@ internal class PlayerServiceITest : RepositoryTest() {
     }
 
     @Test
+    override fun `should throw exception if entry is not found by id on delete`() = transaction {
+        runTest {
+            GlobalScope.launch(exceptionHandler) {
+                // given
+                val id = 1L
+                assertNull(playerService.findById(id))
+
+                // when
+                playerService.deleteById(id)
+            }.join()
+
+            // then
+            assertTrue { exceptions.size == 1 }
+            assertTrue { exceptions[0] is NotFoundException }
+            assertEquals("Entry not found for ID 1", exceptions[0].message)
+        }
+    }
+
+    @Test
     override fun `should update the domain in the database`() = transaction {
         runTest {
             // given
@@ -182,6 +206,24 @@ internal class PlayerServiceITest : RepositoryTest() {
             assertNotEquals(player.nickName, foundPlayer.nickName)
             assertNotEquals(player.user, foundPlayer.user)
             assertEquals(foundPlayer.user, user2)
+        }
+    }
+
+    @Test
+    override fun `should throw exception if entry is not found by id on update`() = transaction {
+        runTest {
+            GlobalScope.launch(exceptionHandler) {
+                // given
+                val player = Player(id = 1L, nickName = "Messi", user = User())
+
+                // when
+                playerService.update(player)
+            }.join()
+
+            // then
+            assertTrue { exceptions.size == 1 }
+            assertTrue { exceptions[0] is NotFoundException }
+            assertEquals("Entry not found for ID 1", exceptions[0].message)
         }
     }
 

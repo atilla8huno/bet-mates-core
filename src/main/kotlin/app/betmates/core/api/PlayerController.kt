@@ -48,7 +48,7 @@ fun Route.playerAPI(
                 ?: return@delete call.respond(HttpStatusCode.BadRequest, "Invalid ID")
 
             val response = deletePlayerCommand.execute(request)
-            call.respond(HttpStatusCode.OK, response)
+            call.respond(HttpStatusCode.NoContent, response)
         }
     }
 }

@@ -6,6 +6,7 @@ import app.betmates.core.api.dto.PlayerResponse
 import app.betmates.core.db.service.PlayerService
 import app.betmates.core.domain.Player
 import app.betmates.core.domain.User
+import app.betmates.core.exception.NotFoundException
 import io.mockk.Called
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -89,7 +90,7 @@ internal class UpdatePlayerCommandUTest {
         } returns null
 
         // when
-        assertThrows<IllegalStateException>("Player not found for ID ${request.id}") {
+        assertThrows<NotFoundException>("Entry not found for ID ${request.id}") {
             // when
             updatePlayerCommand.execute(request)
         }

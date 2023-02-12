@@ -6,6 +6,7 @@ import app.betmates.core.db.entity.UserTable
 import app.betmates.core.db.service.UserService
 import app.betmates.core.domain.Status
 import app.betmates.core.domain.User
+import app.betmates.core.exception.NotFoundException
 import com.toxicbakery.bcrypt.Bcrypt
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
@@ -33,15 +34,15 @@ class UserServiceImpl(
     }
 
     override suspend fun update(domain: User): User = newSuspendedTransaction(db = database) {
-        UserEntity.findById(domain.id!!)!!
-            .apply {
+        UserEntity.findById(domain.id!!)
+            ?.apply {
                 name = domain.name
                 email = domain.email
                 username = domain.username
                 status = domain.status.name
-            }.let {
+            }?.let {
                 mapToDomain(it)
-            }
+            } ?: throw NotFoundException("Entry not found for ID ${domain.id}")
     }
 
     override suspend fun delete(domain: User): Unit = newSuspendedTransaction(db = database) {
@@ -50,6 +51,7 @@ class UserServiceImpl(
 
     override suspend fun deleteById(id: Long): Unit = newSuspendedTransaction(db = database) {
         UserEntity.findById(id)?.delete()
+            ?: throw NotFoundException("Entry not found for ID $id")
     }
 
     override suspend fun findById(id: Long): User? = newSuspendedTransaction(db = database) {
