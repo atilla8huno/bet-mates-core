@@ -58,6 +58,13 @@ class PlayerServiceImpl(
         PlayerEntity.all().asFlow().map { mapToDomain(it) }
     }
 
+    override suspend fun findAllPaginated(limit: Int, offset: Int): Flow<Player> = newSuspendedTransaction(db = database) {
+        PlayerEntity.all()
+            .limit(limit, offset.toLong())
+            .asFlow()
+            .map { mapToDomain(it) }
+    }
+
     override suspend fun delete(domain: Player): Unit = newSuspendedTransaction(db = database) {
         deleteById(domain.id!!)
     }

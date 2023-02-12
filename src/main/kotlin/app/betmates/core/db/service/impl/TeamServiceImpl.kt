@@ -76,6 +76,13 @@ class TeamServiceImpl(
         TeamEntity.all().asFlow().map { mapToDomain(it) }
     }
 
+    override suspend fun findAllPaginated(limit: Int, offset: Int): Flow<Team> = newSuspendedTransaction(db = database) {
+        TeamEntity.all()
+            .limit(limit, offset.toLong())
+            .asFlow()
+            .map { mapToDomain(it) }
+    }
+
     override suspend fun findByName(name: String): Flow<Team> = newSuspendedTransaction(db = database) {
         TeamEntity.find {
             TeamTable.name ilike "%$name%"

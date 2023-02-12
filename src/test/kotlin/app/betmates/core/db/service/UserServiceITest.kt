@@ -103,6 +103,33 @@ internal class UserServiceITest : RepositoryTest() {
     }
 
     @Test
+    override fun `should find all records paginated in the database`() = transaction {
+        runTest {
+            // given
+            val limit = 10
+            val offset = 5
+
+            for (num in 1..20) {
+                userService.save(User(name = "User $num", email = "user$num@mail.com"))
+            }
+
+            // when
+            val allUsers = userService.findAllPaginated(limit, offset)
+
+            // then
+            val list = mutableSetOf<User>()
+            allUsers.collect {
+                list.add(it)
+            }
+
+            assertTrue { list.size == limit }
+            for (num in offset + 1..offset + limit) {
+                assertTrue { list.map { it.name }.contains("User $num") }
+            }
+        }
+    }
+
+    @Test
     override fun `should update the domain in the database`() = transaction {
         runTest {
             // given

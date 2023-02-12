@@ -16,6 +16,7 @@ import io.ktor.client.utils.EmptyContent.contentType
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -27,6 +28,7 @@ private const val DEFAULT_EMAIL = "test@gmail.com"
 private const val DEFAULT_PASSWORD = "123456"
 private const val DEFAULT_USERNAME = "test"
 
+@DelicateCoroutinesApi
 @ExperimentalCoroutinesApi
 internal abstract class ControllerTest : ITest() {
 

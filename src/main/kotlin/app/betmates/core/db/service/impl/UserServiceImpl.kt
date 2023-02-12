@@ -64,6 +64,13 @@ class UserServiceImpl(
         UserEntity.all().asFlow().map { mapToDomain(it) }
     }
 
+    override suspend fun findAllPaginated(limit: Int, offset: Int): Flow<User> = newSuspendedTransaction(db = database) {
+        UserEntity.all()
+            .limit(limit, offset.toLong())
+            .asFlow()
+            .map { mapToDomain(it) }
+    }
+
     override suspend fun findByEmail(email: String): User? = newSuspendedTransaction(db = database) {
         UserEntity.find {
             UserTable.email eq email

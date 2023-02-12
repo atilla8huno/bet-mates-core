@@ -213,6 +213,33 @@ internal class TeamServiceITest : RepositoryTest() {
     }
 
     @Test
+    override fun `should find all records paginated in the database`() = transaction {
+        runTest {
+            // given
+            val limit = 10
+            val offset = 5
+
+            for (num in 1..20) {
+                teamService.save(FootballTeam(name = "Team $num"))
+            }
+
+            // when
+            val allTeams = teamService.findAllPaginated(limit, offset)
+
+            // then
+            val list = mutableSetOf<Team>()
+            allTeams.collect {
+                list.add(it)
+            }
+
+            assertTrue { list.size == limit }
+            for (num in offset + 1..offset + limit) {
+                assertTrue { list.map { it.name }.contains("Team $num") }
+            }
+        }
+    }
+
+    @Test
     override fun `should map entity to domain`() = transaction {
         runTest {
             // given
