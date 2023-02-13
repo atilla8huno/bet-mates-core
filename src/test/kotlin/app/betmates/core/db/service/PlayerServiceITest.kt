@@ -64,7 +64,7 @@ internal class PlayerServiceITest : RepositoryTest() {
             val player = playerService.save(Player(nickName = "CR7", user = user))
 
             // when
-            val foundPlayer = playerService.findById(player.id!!)
+            val foundPlayer = playerService.findById(player.id!!).await()
 
             // then
             assertNotNull(foundPlayer)
@@ -104,7 +104,7 @@ internal class PlayerServiceITest : RepositoryTest() {
             val player4 = playerService.save(Player(nickName = "Player 4", user = user))
 
             // when
-            val allPlayers = playerService.findAll()
+            val allPlayers = playerService.findAll().await()
 
             // then
             val list = mutableSetOf<Player>()
@@ -133,7 +133,7 @@ internal class PlayerServiceITest : RepositoryTest() {
             }
 
             // when
-            val allPlayers = playerService.findAllPaginated(limit, offset)
+            val allPlayers = playerService.findAllPaginated(limit, offset).await()
 
             // then
             val list = mutableSetOf<Player>()
@@ -159,7 +159,7 @@ internal class PlayerServiceITest : RepositoryTest() {
             }
 
             // when
-            val count = playerService.count()
+            val count = playerService.count().await()
 
             // then
             assertEquals(expectedTotal, count)
@@ -172,17 +172,17 @@ internal class PlayerServiceITest : RepositoryTest() {
             // given
             val user = User(name = "User 1", email = "user@1.com")
             val player = playerService.save(Player(nickName = "CR7", user = user))
-            assertNotNull(playerService.findById(player.id!!))
+            assertNotNull(playerService.findById(player.id!!).await())
 
             // when
             playerService.delete(player)
 
             // then
-            val foundPlayer = playerService.findById(player.id!!)
+            val foundPlayer = playerService.findById(player.id!!).await()
 
             assertNull(foundPlayer)
             // no cascade
-            assertNotNull(userService.findById(player.user.id!!))
+            assertNotNull(userService.findById(player.user.id!!)).await()
         }
     }
 
@@ -192,17 +192,17 @@ internal class PlayerServiceITest : RepositoryTest() {
             // given
             val user = User(name = "User 1", email = "user@1.com")
             val player = playerService.save(Player(nickName = "CR7", user = user))
-            assertNotNull(playerService.findById(player.id!!))
+            assertNotNull(playerService.findById(player.id!!).await())
 
             // when
             playerService.deleteById(player.id!!)
 
             // then
-            val foundPlayer = playerService.findById(player.id!!)
+            val foundPlayer = playerService.findById(player.id!!).await()
 
             assertNull(foundPlayer)
             // no cascade
-            assertNotNull(userService.findById(player.user.id!!))
+            assertNotNull(userService.findById(player.user.id!!).await())
         }
     }
 
@@ -212,7 +212,7 @@ internal class PlayerServiceITest : RepositoryTest() {
             GlobalScope.launch(exceptionHandler) {
                 // given
                 val id = 1L
-                assertNull(playerService.findById(id))
+                assertNull(playerService.findById(id).await())
 
                 // when
                 playerService.deleteById(id)
@@ -244,7 +244,7 @@ internal class PlayerServiceITest : RepositoryTest() {
             updatedPlayer = playerService.update(updatedPlayer)
 
             // then
-            val foundPlayer = playerService.findById(player.id!!)!!
+            val foundPlayer = playerService.findById(player.id!!).await()!!
 
             assertEquals(player.id!!, updatedPlayer.id!!)
             assertEquals(player.id!!, foundPlayer.id!!)

@@ -8,6 +8,7 @@ import app.betmates.core.domain.Status
 import app.betmates.core.domain.User
 import app.betmates.core.exception.NotFoundException
 import com.toxicbakery.bcrypt.Bcrypt
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
@@ -16,6 +17,7 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 
 class UserServiceImpl(
     private val database: Database = DatabaseConnection.database
@@ -54,21 +56,21 @@ class UserServiceImpl(
             ?: throw NotFoundException("Entry not found for ID $id")
     }
 
-    override suspend fun findById(id: Long): User? = newSuspendedTransaction(db = database) {
+    override suspend fun findById(id: Long): Deferred<User?> = suspendedTransactionAsync(db = database) {
         UserEntity.findById(id)?.let {
             mapToDomain(it)
         }
     }
 
-    override suspend fun findAll(): Flow<User> = newSuspendedTransaction(db = database) {
+    override suspend fun findAll(): Deferred<Flow<User>> = suspendedTransactionAsync(db = database) {
         UserEntity.all().asFlow().map { mapToDomain(it) }
     }
 
-    override suspend fun count(): Long = newSuspendedTransaction(db = database) {
+    override suspend fun count(): Deferred<Long> = suspendedTransactionAsync(db = database) {
         UserEntity.all().count()
     }
 
-    override suspend fun findAllPaginated(limit: Int, offset: Int): Flow<User> = newSuspendedTransaction(db = database) {
+    override suspend fun findAllPaginated(limit: Int, offset: Int): Deferred<Flow<User>> = suspendedTransactionAsync(db = database) {
         UserEntity.all()
             .limit(limit, offset.toLong())
             .asFlow()

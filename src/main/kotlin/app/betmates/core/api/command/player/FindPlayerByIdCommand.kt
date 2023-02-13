@@ -13,6 +13,7 @@ class FindPlayerByIdCommand(
 
     override suspend fun execute(request: Long): PlayerResponse = coroutineScope {
         playerService.findById(request)
+            .await()
             ?.let {
                 PlayerResponse(
                     id = it.id!!,

@@ -56,8 +56,8 @@ internal class TeamServiceITest : RepositoryTest() {
             val savedFootballTeam = teamService.save(team1)
             val savedSnookerTeam = teamService.save(team2)
 
-            val foundTeam1 = teamService.findById(savedFootballTeam.id!!)
-            val foundTeam2 = teamService.findById(savedSnookerTeam.id!!)
+            val foundTeam1 = teamService.findById(savedFootballTeam.id!!).await()
+            val foundTeam2 = teamService.findById(savedSnookerTeam.id!!).await()
 
             // then
             assertNotNull(foundTeam1)
@@ -93,7 +93,7 @@ internal class TeamServiceITest : RepositoryTest() {
             updatedTeam = teamService.update(updatedTeam)
 
             // then
-            val foundTeam = teamService.findById(team.id!!)!!
+            val foundTeam = teamService.findById(team.id!!).await()!!
 
             assertEquals(updatedTeam, foundTeam)
             assertNotEquals(team.name, foundTeam.name)
@@ -127,13 +127,13 @@ internal class TeamServiceITest : RepositoryTest() {
         runTest {
             // given
             val team = teamService.save(FootballTeam(name = "Real Madrid"))
-            assertNotNull(teamService.findById(team.id!!))
+            assertNotNull(teamService.findById(team.id!!).await())
 
             // when
             teamService.delete(team)
 
             // then
-            val foundTeam = teamService.findById(team.id!!)
+            val foundTeam = teamService.findById(team.id!!).await()
             assertNull(foundTeam)
         }
     }
@@ -143,13 +143,13 @@ internal class TeamServiceITest : RepositoryTest() {
         runTest {
             // given
             val team = teamService.save(FootballTeam(name = "Real Madrid"))
-            assertNotNull(teamService.findById(team.id!!))
+            assertNotNull(teamService.findById(team.id!!).await())
 
             // when
             teamService.deleteById(team.id!!)
 
             // then
-            val foundTeam = teamService.findById(team.id!!)
+            val foundTeam = teamService.findById(team.id!!).await()
             assertNull(foundTeam)
         }
     }
@@ -160,7 +160,7 @@ internal class TeamServiceITest : RepositoryTest() {
             GlobalScope.launch(exceptionHandler) {
                 // given
                 val id = 1L
-                assertNull(teamService.findById(id))
+                assertNull(teamService.findById(id).await())
 
                 // when
                 teamService.deleteById(id)
@@ -197,7 +197,7 @@ internal class TeamServiceITest : RepositoryTest() {
             val team4 = teamService.save(FootballTeam(name = "Liverpool"))
 
             // when
-            val allTeams = teamService.findAll()
+            val allTeams = teamService.findAll().await()
 
             // then
             val list = mutableSetOf<Team>()
@@ -224,7 +224,7 @@ internal class TeamServiceITest : RepositoryTest() {
             }
 
             // when
-            val allTeams = teamService.findAllPaginated(limit, offset)
+            val allTeams = teamService.findAllPaginated(limit, offset).await()
 
             // then
             val list = mutableSetOf<Team>()
@@ -249,7 +249,7 @@ internal class TeamServiceITest : RepositoryTest() {
             }
 
             // when
-            val count = teamService.count()
+            val count = teamService.count().await()
 
             // then
             assertEquals(expectedTotal, count)
@@ -291,7 +291,7 @@ internal class TeamServiceITest : RepositoryTest() {
             val savedTeam = teamService.save(team)
 
             // then
-            val players = teamService.findById(savedTeam.id!!)!!.players()
+            val players = teamService.findById(savedTeam.id!!).await()!!.players()
 
             assertEquals(
                 2,
@@ -322,7 +322,7 @@ internal class TeamServiceITest : RepositoryTest() {
             savedTeam = teamService.update(team)
 
             // then
-            val players = teamService.findById(savedTeam.id!!)!!.players()
+            val players = teamService.findById(savedTeam.id!!).await()!!.players()
 
             assertEquals(
                 2,
@@ -353,7 +353,7 @@ internal class TeamServiceITest : RepositoryTest() {
             savedTeam = teamService.update(savedTeam)
 
             // then
-            val players = teamService.findById(savedTeam.id!!)!!.players()
+            val players = teamService.findById(savedTeam.id!!).await()!!.players()
 
             assertEquals(1, players.size)
             assertEquals(

@@ -11,11 +11,13 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.assertThrows
+import javax.management.Query.eq
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -41,11 +43,13 @@ internal class FindPlayerByIdCommandUTest {
         val request = 1L
         coEvery {
             playerService.findById(eq(request))
-        } returns Player(
-            id = request,
-            nickName = "Player",
-            user = User()
-        )
+        } returns async {
+            Player(
+                id = request,
+                nickName = "Player",
+                user = User()
+            )
+        }
 
         // when
         val response = findPlayerByIdCommand.execute(request)
@@ -64,7 +68,7 @@ internal class FindPlayerByIdCommandUTest {
         val request = 1L
         coEvery {
             playerService.findById(eq(request))
-        } returns null
+        } returns async { null }
 
         // when
         assertThrows<NotFoundException>("Entry not found for id 1") {

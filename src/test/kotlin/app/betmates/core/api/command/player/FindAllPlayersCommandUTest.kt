@@ -12,11 +12,13 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import javax.management.Query.eq
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -45,15 +47,17 @@ internal class FindAllPlayersCommandUTest {
 
         coEvery {
             playerService.count()
-        } returns expectedTotal
+        } returns async { expectedTotal }
 
         coEvery {
             playerService.findAllPaginated(eq(limit), eq(offset))
-        } returns listOf(
-            Player(1L, "Player 1", user = User()),
-            Player(2L, "Player 2", user = User()),
-            Player(3L, "Player 3", user = User())
-        ).asFlow()
+        } returns async {
+            listOf(
+                Player(1L, "Player 1", user = User()),
+                Player(2L, "Player 2", user = User()),
+                Player(3L, "Player 3", user = User())
+            ).asFlow()
+        }
 
         // when
         val response = findAllPlayersCommand.execute(request)

@@ -18,13 +18,14 @@ class FindAllPlayersCommand(
     override suspend fun execute(request: PaginatedRequest): PaginatedResponse<PlayerResponse> = newSuspendedTransaction(db = database) {
         val data = playerService
             .findAllPaginated(request.limit, request.offset)
+            .await()
             .map { PlayerResponse(it.id!!, it.nickName) }
             .toList(mutableListOf())
 
         PaginatedResponse(
             limit = request.limit,
             offset = request.offset,
-            total = playerService.count(),
+            total = playerService.count().await(),
             data = data
         )
     }

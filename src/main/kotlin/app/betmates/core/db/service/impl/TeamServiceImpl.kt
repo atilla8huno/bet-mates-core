@@ -13,12 +13,14 @@ import app.betmates.core.domain.Status
 import app.betmates.core.domain.Team
 import app.betmates.core.domain.TeamType
 import app.betmates.core.exception.NotFoundException
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SizedCollection
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 
 class TeamServiceImpl(
     private val playerService: PlayerService,
@@ -66,21 +68,21 @@ class TeamServiceImpl(
             } ?: throw NotFoundException("Entry not found for ID ${domain.id}")
     }
 
-    override suspend fun findById(id: Long): Team? = newSuspendedTransaction(db = database) {
+    override suspend fun findById(id: Long): Deferred<Team?> = suspendedTransactionAsync(db = database) {
         TeamEntity.findById(id)?.let {
             mapToDomain(it)
         }
     }
 
-    override suspend fun findAll(): Flow<Team> = newSuspendedTransaction(db = database) {
+    override suspend fun findAll(): Deferred<Flow<Team>> = suspendedTransactionAsync(db = database) {
         TeamEntity.all().asFlow().map { mapToDomain(it) }
     }
 
-    override suspend fun count(): Long = newSuspendedTransaction(db = database) {
+    override suspend fun count(): Deferred<Long> = suspendedTransactionAsync(db = database) {
         TeamEntity.all().count()
     }
 
-    override suspend fun findAllPaginated(limit: Int, offset: Int): Flow<Team> = newSuspendedTransaction(db = database) {
+    override suspend fun findAllPaginated(limit: Int, offset: Int): Deferred<Flow<Team>> = suspendedTransactionAsync(db = database) {
         TeamEntity.all()
             .limit(limit, offset.toLong())
             .asFlow()

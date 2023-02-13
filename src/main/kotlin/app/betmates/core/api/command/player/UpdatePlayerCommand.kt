@@ -13,7 +13,7 @@ class UpdatePlayerCommand(
 ) : Command<PlayerRequest, PlayerResponse> {
 
     override suspend fun execute(request: PlayerRequest): PlayerResponse = coroutineScope {
-        val player = playerService.findById(request.id)
+        val player = playerService.findById(request.id).await()
             ?: throw NotFoundException("Entry not found for ID ${request.id}")
 
         player.apply {

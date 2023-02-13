@@ -10,6 +10,7 @@ import app.betmates.core.db.service.PlayerService
 import app.betmates.core.db.service.UserService
 import app.betmates.core.domain.Player
 import app.betmates.core.exception.NotFoundException
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
@@ -17,7 +18,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 
 class PlayerServiceImpl(
     private val userService: UserService = UserServiceImpl(),
@@ -49,21 +50,21 @@ class PlayerServiceImpl(
             } ?: throw NotFoundException("Entry not found for ID ${domain.id}")
     }
 
-    override suspend fun findById(id: Long): Player? = newSuspendedTransaction(db = database) {
+    override suspend fun findById(id: Long): Deferred<Player?> = suspendedTransactionAsync(db = database) {
         PlayerEntity.findById(id)?.let {
             mapToDomain(it)
         }
     }
 
-    override suspend fun findAll(): Flow<Player> = newSuspendedTransaction(db = database) {
+    override suspend fun findAll(): Deferred<Flow<Player>> = suspendedTransactionAsync(db = database) {
         PlayerEntity.all().asFlow().map { mapToDomain(it) }
     }
 
-    override suspend fun count(): Long = transaction(db = database) {
+    override suspend fun count(): Deferred<Long> = suspendedTransactionAsync(db = database) {
         PlayerEntity.all().count()
     }
 
-    override suspend fun findAllPaginated(limit: Int, offset: Int): Flow<Player> = newSuspendedTransaction(db = database) {
+    override suspend fun findAllPaginated(limit: Int, offset: Int): Deferred<Flow<Player>> = suspendedTransactionAsync(db = database) {
         PlayerEntity.all()
             .limit(limit, offset.toLong())
             .asFlow()

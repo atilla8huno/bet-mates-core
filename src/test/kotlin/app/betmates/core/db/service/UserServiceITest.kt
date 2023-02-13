@@ -44,7 +44,7 @@ internal class UserServiceITest : RepositoryTest() {
 
             // when
             val userSaved = userService.saveOrUpdate(user)
-            val userFound = userService.findById(user.id!!)
+            val userFound = userService.findById(user.id!!).await()
 
             // then
             assertNotNull(userSaved)
@@ -87,7 +87,7 @@ internal class UserServiceITest : RepositoryTest() {
             val user4 = userService.save(User(name = "User 4", email = "user4@4.com"))
 
             // when
-            val allUsers = userService.findAll()
+            val allUsers = userService.findAll().await()
 
             // then
             val list = mutableSetOf<User>()
@@ -114,7 +114,7 @@ internal class UserServiceITest : RepositoryTest() {
             }
 
             // when
-            val allUsers = userService.findAllPaginated(limit, offset)
+            val allUsers = userService.findAllPaginated(limit, offset).await()
 
             // then
             val list = mutableSetOf<User>()
@@ -139,7 +139,7 @@ internal class UserServiceITest : RepositoryTest() {
             }
 
             // when
-            val count = userService.count()
+            val count = userService.count().await()
 
             // then
             assertEquals(expectedTotal, count)
@@ -164,7 +164,7 @@ internal class UserServiceITest : RepositoryTest() {
             updatedUser = userService.saveOrUpdate(updatedUser)
 
             // then
-            val foundUser = userService.findById(user.id!!)!!
+            val foundUser = userService.findById(user.id!!).await()!!
 
             assertEquals(updatedUser, foundUser)
             assertNotEquals(user.name, foundUser.name)
@@ -198,13 +198,13 @@ internal class UserServiceITest : RepositoryTest() {
         runTest {
             // given
             val user = userService.save(User(name = "User 1", email = "user@1.com"))
-            assertNotNull(userService.findById(user.id!!))
+            assertNotNull(userService.findById(user.id!!).await())
 
             // when
             userService.delete(user)
 
             // then
-            val foundUser = userService.findById(user.id!!)
+            val foundUser = userService.findById(user.id!!).await()
 
             assertNull(foundUser)
         }
@@ -215,13 +215,13 @@ internal class UserServiceITest : RepositoryTest() {
         runTest {
             // given
             val user = userService.save(User(name = "User 1", email = "user@1.com"))
-            assertNotNull(userService.findById(user.id!!))
+            assertNotNull(userService.findById(user.id!!).await())
 
             // when
             userService.deleteById(user.id!!)
 
             // then
-            val foundUser = userService.findById(user.id!!)
+            val foundUser = userService.findById(user.id!!).await()
 
             assertNull(foundUser)
         }
@@ -233,7 +233,7 @@ internal class UserServiceITest : RepositoryTest() {
             GlobalScope.launch(exceptionHandler) {
                 // given
                 val id = 1L
-                assertNull(userService.findById(id))
+                assertNull(userService.findById(id).await())
 
                 // when
                 userService.deleteById(id)
@@ -253,7 +253,7 @@ internal class UserServiceITest : RepositoryTest() {
             val user = userService.save(User(name = "User 1", email = "user@1.com"))
 
             // when
-            val foundUser = userService.findById(user.id!!)
+            val foundUser = userService.findById(user.id!!).await()
 
             // then
             assertNotNull(foundUser)
