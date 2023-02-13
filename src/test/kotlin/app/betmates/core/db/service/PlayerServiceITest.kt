@@ -182,7 +182,7 @@ internal class PlayerServiceITest : RepositoryTest() {
 
             assertNull(foundPlayer)
             // no cascade
-            assertNotNull(userService.findById(player.user.id!!)).await()
+            assertNotNull(userService.findById(player.user.id!!).await())
         }
     }
 

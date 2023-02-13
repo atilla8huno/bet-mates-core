@@ -180,10 +180,11 @@ internal class TeamServiceITest : RepositoryTest() {
             val savedFootballTeam = teamService.save(FootballTeam(name = "Real Madrid"))
 
             // when
-            val foundTeam = teamService.findById(savedFootballTeam.id!!)
+            val foundTeam = teamService.findById(savedFootballTeam.id!!).await()
 
             // then
             assertNotNull(foundTeam)
+            assertEquals("Real Madrid", foundTeam.name)
         }
     }
 
