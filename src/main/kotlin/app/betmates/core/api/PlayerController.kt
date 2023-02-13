@@ -3,8 +3,11 @@ package app.betmates.core.api
 import app.betmates.core.api.command.Command
 import app.betmates.core.api.command.player.CreatePlayerCommand
 import app.betmates.core.api.command.player.DeletePlayerCommand
+import app.betmates.core.api.command.player.FindAllPlayersCommand
 import app.betmates.core.api.command.player.FindPlayerByIdCommand
 import app.betmates.core.api.command.player.UpdatePlayerCommand
+import app.betmates.core.api.dto.PaginatedRequest
+import app.betmates.core.api.dto.PaginatedResponse
 import app.betmates.core.api.dto.PlayerRequest
 import app.betmates.core.api.dto.PlayerResponse
 import io.ktor.http.HttpStatusCode
@@ -22,7 +25,8 @@ fun Route.playerAPI(
     createPlayerCommand: Command<PlayerRequest, PlayerResponse> = CreatePlayerCommand(),
     updatePlayerCommand: Command<PlayerRequest, PlayerResponse> = UpdatePlayerCommand(),
     deletePlayerCommand: Command<Long, Unit> = DeletePlayerCommand(),
-    findPlayerByIdCommand: Command<Long, PlayerResponse> = FindPlayerByIdCommand()
+    findPlayerByIdCommand: Command<Long, PlayerResponse> = FindPlayerByIdCommand(),
+    findAllPlayersCommand: Command<PaginatedRequest, PaginatedResponse<PlayerResponse>> = FindAllPlayersCommand()
 ) {
     route("/api/player") {
         post {
@@ -52,6 +56,12 @@ fun Route.playerAPI(
 
             val response = deletePlayerCommand.execute(request)
             call.respond(HttpStatusCode.NoContent, response)
+        }
+
+        get {
+            val request = PaginatedRequest(10, 0)
+            val response = findAllPlayersCommand.execute(request)
+            call.respond(HttpStatusCode.OK, response)
         }
 
         get("{id}") {

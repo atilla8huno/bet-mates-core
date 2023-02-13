@@ -17,5 +17,6 @@ internal abstract class RepositoryTest : ITest() {
     abstract fun `should find a record in the database by id`()
     abstract fun `should find all records in the database`()
     abstract fun `should find all records paginated in the database`()
+    abstract fun `should count records in the database`()
     abstract fun `should map entity to domain`()
 }

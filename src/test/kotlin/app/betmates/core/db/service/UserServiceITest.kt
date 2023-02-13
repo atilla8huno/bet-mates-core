@@ -130,6 +130,23 @@ internal class UserServiceITest : RepositoryTest() {
     }
 
     @Test
+    override fun `should count records in the database`() = transaction {
+        runTest {
+            // given
+            val expectedTotal = 20L
+            for (num in 1..expectedTotal) {
+                userService.save(User(name = "User $num", email = "user$num@mail.com"))
+            }
+
+            // when
+            val count = userService.count()
+
+            // then
+            assertEquals(expectedTotal, count)
+        }
+    }
+
+    @Test
     override fun `should update the domain in the database`() = transaction {
         runTest {
             // given

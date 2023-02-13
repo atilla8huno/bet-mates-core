@@ -23,6 +23,7 @@ import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @DelicateCoroutinesApi
 @ExperimentalCoroutinesApi
@@ -307,14 +308,63 @@ internal class PlayerControllerITest : ControllerTest() {
         }
     }
 
+    @Test
+    fun `should accept GET request on find all players paginated API`() = testApplication {
+        // given
+        val token = authenticateUser(client)
+        savePlayer(client, token, nickName = "Player 1")
+        savePlayer(client, token, nickName = "Player 2")
+        savePlayer(client, token, nickName = "Player 3")
+
+        // when
+        client.get("/api/player") {
+            headers.append(HttpHeaders.Authorization, "Bearer $token")
+            contentType(ContentType.Application.Json)
+        }.apply {
+            // then
+            assertEquals(HttpStatusCode.OK, status)
+
+            /*
+            {
+              "limit": 10,
+              "offset": 0,
+              "total": 3,
+              "data": [
+                {
+                  "id": 1,
+                  "nickName": "Player 1"
+                },
+                {
+                  "id": 2,
+                  "nickName": "Player 2"
+                },
+                {
+                  "id": 3,
+                  "nickName": "Player 3"
+                }
+              ]
+            }
+             */
+            val response = bodyAsText()
+
+            assertTrue { response.contains("\"limit\": 10") }
+            assertTrue { response.contains("\"offset\": 0") }
+            assertTrue { response.contains("\"total\": 3") }
+            assertTrue { response.contains("\"nickName\": \"Player 1\"") }
+            assertTrue { response.contains("\"nickName\": \"Player 2\"") }
+            assertTrue { response.contains("\"nickName\": \"Player 3\"") }
+        }
+    }
+
     private suspend fun savePlayer(
         client: HttpClient,
-        token: String
+        token: String,
+        nickName: String = "SuperTester"
     ) {
         val request = Json.encodeToString(
             value = PlayerRequest(
                 userId = 1L,
-                nickName = "SuperTester"
+                nickName = nickName
             )
         )
 

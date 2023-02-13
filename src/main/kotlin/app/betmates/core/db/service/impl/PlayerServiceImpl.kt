@@ -17,6 +17,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class PlayerServiceImpl(
     private val userService: UserService = UserServiceImpl(),
@@ -56,6 +57,10 @@ class PlayerServiceImpl(
 
     override suspend fun findAll(): Flow<Player> = newSuspendedTransaction(db = database) {
         PlayerEntity.all().asFlow().map { mapToDomain(it) }
+    }
+
+    override suspend fun count(): Long = transaction(db = database) {
+        PlayerEntity.all().count()
     }
 
     override suspend fun findAllPaginated(limit: Int, offset: Int): Flow<Player> = newSuspendedTransaction(db = database) {

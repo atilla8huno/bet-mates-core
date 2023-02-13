@@ -76,6 +76,10 @@ class TeamServiceImpl(
         TeamEntity.all().asFlow().map { mapToDomain(it) }
     }
 
+    override suspend fun count(): Long = newSuspendedTransaction(db = database) {
+        TeamEntity.all().count()
+    }
+
     override suspend fun findAllPaginated(limit: Int, offset: Int): Flow<Team> = newSuspendedTransaction(db = database) {
         TeamEntity.all()
             .limit(limit, offset.toLong())

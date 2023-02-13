@@ -18,6 +18,7 @@ sealed interface RepositoryService<D : Base, E : LongEntity> {
     suspend fun delete(domain: D): Unit = TODO("Not yet implemented")
     suspend fun deleteById(id: Long): Unit = TODO("Not yet implemented")
     suspend fun findAll(): Flow<D> = TODO("Not yet implemented")
+    suspend fun count(): Long = TODO("Not yet implemented")
     suspend fun findAllPaginated(
         limit: Int = 10,
         offset: Int = 0

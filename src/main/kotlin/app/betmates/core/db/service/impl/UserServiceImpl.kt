@@ -64,6 +64,10 @@ class UserServiceImpl(
         UserEntity.all().asFlow().map { mapToDomain(it) }
     }
 
+    override suspend fun count(): Long = newSuspendedTransaction(db = database) {
+        UserEntity.all().count()
+    }
+
     override suspend fun findAllPaginated(limit: Int, offset: Int): Flow<User> = newSuspendedTransaction(db = database) {
         UserEntity.all()
             .limit(limit, offset.toLong())

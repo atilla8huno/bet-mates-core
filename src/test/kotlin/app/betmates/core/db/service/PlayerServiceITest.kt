@@ -149,6 +149,24 @@ internal class PlayerServiceITest : RepositoryTest() {
     }
 
     @Test
+    override fun `should count records in the database`() = transaction {
+        runTest {
+            // given
+            val user = userService.save(User(name = "User 1", email = "user@1.com"))
+            val expectedTotal = 20L
+            for (num in 1..expectedTotal) {
+                playerService.save(Player(nickName = "Player $num", user = user))
+            }
+
+            // when
+            val count = playerService.count()
+
+            // then
+            assertEquals(expectedTotal, count)
+        }
+    }
+
+    @Test
     override fun `should delete the domain in the database`() = transaction {
         runTest {
             // given

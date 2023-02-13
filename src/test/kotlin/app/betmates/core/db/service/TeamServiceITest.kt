@@ -240,6 +240,23 @@ internal class TeamServiceITest : RepositoryTest() {
     }
 
     @Test
+    override fun `should count records in the database`() = transaction {
+        runTest {
+            // given
+            val expectedTotal = 20L
+            for (num in 1..expectedTotal) {
+                teamService.save(FootballTeam(name = "Team $num"))
+            }
+
+            // when
+            val count = teamService.count()
+
+            // then
+            assertEquals(expectedTotal, count)
+        }
+    }
+
+    @Test
     override fun `should map entity to domain`() = transaction {
         runTest {
             // given
