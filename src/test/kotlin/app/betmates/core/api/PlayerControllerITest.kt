@@ -317,7 +317,7 @@ internal class PlayerControllerITest : ControllerTest() {
         savePlayer(client, token, nickName = "Player 3")
 
         // when
-        client.get("/api/player") {
+        client.get("/api/player?limit=5&offset=1") {
             headers.append(HttpHeaders.Authorization, "Bearer $token")
             contentType(ContentType.Application.Json)
         }.apply {
@@ -326,14 +326,10 @@ internal class PlayerControllerITest : ControllerTest() {
 
             /*
             {
-              "limit": 10,
-              "offset": 0,
+              "limit": 5,
+              "offset": 1,
               "total": 3,
               "data": [
-                {
-                  "id": 1,
-                  "nickName": "Player 1"
-                },
                 {
                   "id": 2,
                   "nickName": "Player 2"
@@ -347,10 +343,12 @@ internal class PlayerControllerITest : ControllerTest() {
              */
             val response = bodyAsText()
 
-            assertTrue { response.contains("\"limit\": 10") }
-            assertTrue { response.contains("\"offset\": 0") }
+            assertTrue { response.contains("\"limit\": 5") }
+            assertTrue { response.contains("\"offset\": 1") }
             assertTrue { response.contains("\"total\": 3") }
-            assertTrue { response.contains("\"nickName\": \"Player 1\"") }
+
+            assertFalse { response.contains("\"nickName\": \"Player 1\"") }
+
             assertTrue { response.contains("\"nickName\": \"Player 2\"") }
             assertTrue { response.contains("\"nickName\": \"Player 3\"") }
         }

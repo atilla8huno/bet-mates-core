@@ -59,8 +59,12 @@ fun Route.playerAPI(
         }
 
         get {
-            val request = PaginatedRequest(10, 0)
+            val limit = call.request.queryParameters["limit"]?.toInt() ?: 10
+            val offset = call.request.queryParameters["offset"]?.toInt() ?: 0
+
+            val request = PaginatedRequest(limit, offset)
             val response = findAllPlayersCommand.execute(request)
+
             call.respond(HttpStatusCode.OK, response)
         }
 
