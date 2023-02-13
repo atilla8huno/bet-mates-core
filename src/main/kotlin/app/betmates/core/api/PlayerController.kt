@@ -10,6 +10,8 @@ import app.betmates.core.api.dto.PaginatedRequest
 import app.betmates.core.api.dto.PaginatedResponse
 import app.betmates.core.api.dto.PlayerRequest
 import app.betmates.core.api.dto.PlayerResponse
+import app.betmates.core.db.service.DEFAULT_LIMIT
+import app.betmates.core.db.service.DEFAULT_OFFSET
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.request.receive
@@ -59,8 +61,8 @@ fun Route.playerAPI(
         }
 
         get {
-            val limit = call.request.queryParameters["limit"]?.toInt() ?: 10
-            val offset = call.request.queryParameters["offset"]?.toInt() ?: 0
+            val limit = call.request.queryParameters["limit"]?.toInt() ?: DEFAULT_LIMIT
+            val offset = call.request.queryParameters["offset"]?.toInt() ?: DEFAULT_OFFSET
 
             val request = PaginatedRequest(limit, offset)
             val response = findAllPlayersCommand.execute(request)

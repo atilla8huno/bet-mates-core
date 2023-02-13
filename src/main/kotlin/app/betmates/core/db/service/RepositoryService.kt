@@ -10,6 +10,9 @@ import org.jetbrains.exposed.sql.ExpressionWithColumnType
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.QueryParameter
 
+const val DEFAULT_LIMIT = 10
+const val DEFAULT_OFFSET = 0
+
 sealed interface RepositoryService<D : Base, E : LongEntity> {
 
     suspend fun save(domain: D): D = TODO("Not yet implemented")
@@ -20,8 +23,8 @@ sealed interface RepositoryService<D : Base, E : LongEntity> {
     suspend fun findById(id: Long): Deferred<D?> = TODO("Not yet implemented")
     suspend fun findAll(): Deferred<Flow<D>> = TODO("Not yet implemented")
     suspend fun findAllPaginated(
-        limit: Int = 10,
-        offset: Int = 0
+        limit: Int = DEFAULT_LIMIT,
+        offset: Int = DEFAULT_OFFSET
     ): Deferred<Flow<D>> = TODO("Not yet implemented")
     suspend fun count(): Deferred<Long> = TODO("Not yet implemented")
     fun mapToDomain(entity: E): D = TODO("Not yet implemented")
